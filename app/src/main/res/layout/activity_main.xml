@@ -17,9 +17,9 @@
         app:titleTextColor="#FFFFFF"
         app:contentInsetStartWithNavigation="0dp"/>
 
-    <com.gergelydaniel.app.routing.Outlet
+    <com.bluelinelabs.conductor.ChangeHandlerFrameLayout
         android:id="@+id/outlet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

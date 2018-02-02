@@ -5,16 +5,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
-import com.gergelydaniel.app.routing.Router
+import com.bluelinelabs.conductor.Conductor
+import com.bluelinelabs.conductor.Router
+import com.bluelinelabs.conductor.RouterTransaction
 import com.gergelydaniel.jogjegyzet.R
+import com.gergelydaniel.jogjegyzet.ui.home.HomeController
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
-    @Inject
-    lateinit var router : Router
+    private lateinit var router :Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +25,10 @@ class MainActivity : AppCompatActivity() {
 
         AndroidInjection.inject(this)
 
-        router.outlet = outlet
+        router = Conductor.attachRouter(this, outlet, savedInstanceState)
+        if (!router.hasRootController()) {
+            router.setRoot(RouterTransaction.with(HomeController()))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

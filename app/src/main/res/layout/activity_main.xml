@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,11 +15,13 @@
         app:titleTextAppearance="@style/TitleText"
         android:theme="@style/AppToolbar"
         app:titleTextColor="#FFFFFF"
+        android:layout_alignParentTop="true"
         app:contentInsetStartWithNavigation="0dp"/>
 
     <com.bluelinelabs.conductor.ChangeHandlerFrameLayout
         android:id="@+id/outlet"
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</FrameLayout>
+</RelativeLayout>

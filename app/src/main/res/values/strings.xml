@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Jogjegyzet</string>
     <string name="search">Keresés</string>
+    <string name="category">Kategória</string>
+    <string name="name">Név</string>
+    <string name="description">Leírás</string>
+    <string name="num_downloads">Letöltések száma</string>
+    <string name="error">Hiba!</string>
 </resources>

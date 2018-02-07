@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/document_error"
+        android:text="@string/error"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"/>
+    
+    <ProgressBar
+        android:id="@+id/document_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    
+    <LinearLayout
+        android:id="@+id/document_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/SecondaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name"/>
+
+        <TextView
+            android:id="@+id/document_details_name"
+            style="@style/PrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Római jogok összes.txt"/>
+
+        <TextView
+            android:id="@+id/label_document_description"
+            style="@style/SecondaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description"/>
+
+        <TextView
+            android:id="@+id/document_details_description"
+            style="@style/PrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Ez egy nagyon fasza jegyzet!"/>
+
+        <TextView
+            style="@style/SecondaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/num_downloads"/>
+
+        <TextView
+            android:id="@+id/document_details_downloads"
+            style="@style/PrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="1234324"/>
+
+    </LinearLayout>
+</FrameLayout>

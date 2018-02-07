@@ -9,7 +9,7 @@ import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.gergelydaniel.jogjegyzet.R
-import com.gergelydaniel.jogjegyzet.ui.home.HomeController
+import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         router = Conductor.attachRouter(this, outlet, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(HomeController()))
+            router.setRoot(RouterTransaction.with(CategoryController()))
         }
     }
 
@@ -52,5 +52,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onBackPressed() {
+        router.handleBack()
     }
 }

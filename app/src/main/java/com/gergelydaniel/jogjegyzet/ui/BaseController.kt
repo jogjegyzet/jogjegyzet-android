@@ -6,17 +6,19 @@ import com.christianbahl.conductor.ConductorInjection
 
 
 abstract class BaseController : RxController() {
-    private var injected = false
+    private var firstAttachrun = false
 
     init {
         retainViewMode = RetainViewMode.RELEASE_DETACH
     }
 
     override fun onAttach(view: View) {
-        if(! injected) {
-            ConductorInjection.inject(this)
-            injected = true
+        if(!firstAttachrun) {
+            onFirstAttach()
+            firstAttachrun = true
         }
     }
+
+    open fun onFirstAttach() {}
 
 }

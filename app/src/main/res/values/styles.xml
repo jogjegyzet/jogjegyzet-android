@@ -21,4 +21,14 @@
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>
 
+    <style name="PrimaryText">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="SecondaryText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/textSecondary</item>
+    </style>
+
 </resources>

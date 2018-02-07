@@ -2,7 +2,8 @@ package com.gergelydaniel.jogjegyzet.di
 
 import com.christianbahl.conductor.ConductorInjectionModule
 import com.gergelydaniel.jogjegyzet.App
-import com.gergelydaniel.jogjegyzet.di.homecontroller.HomeControllerModule
+import com.gergelydaniel.jogjegyzet.di.categorycontroller.CategoryControllerModule
+import com.gergelydaniel.jogjegyzet.di.documentcontroller.DocumentControllerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -16,7 +17,10 @@ import javax.inject.Singleton
     AppModule::class,
     ConductorInjectionModule::class,
     MainActivityModule::class,
-    HomeControllerModule::class])
+    CategoryControllerModule::class,
+    DocumentControllerModule::class,
+    ConfigModule::class,
+    RetrofitModule::class])
 interface AppComponent {
 
     @Component.Builder

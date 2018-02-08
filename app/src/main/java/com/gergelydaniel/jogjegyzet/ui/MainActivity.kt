@@ -55,6 +55,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        router.handleBack()
+        if(! router.handleBack()){
+            super.onBackPressed()
+        }
     }
 }

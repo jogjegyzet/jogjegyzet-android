@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.BaseController
+import com.gergelydaniel.jogjegyzet.ui.reader.ReaderController
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
+import com.jakewharton.rxbinding2.view.RxView
 import kotlinx.android.synthetic.main.controller_document.view.*
 import javax.inject.Inject
 
@@ -30,6 +34,7 @@ class DocumentController(private val docId : String) : BaseController() {
 
     override fun onAttach(view: View) {
         super.onAttach(view)
+
 
         presenter.getViewModel(docId)
                 .compose(bindToLifecycle())
@@ -59,16 +64,29 @@ class DocumentController(private val docId : String) : BaseController() {
                 view.document_error.hide()
                 view.document_progress.hide()
 
-                view.document_details_name.text = vm.document.name
-                if(vm.document.desc.isNullOrEmpty()) {
+                val document = vm.document
+
+                view.document_details_name.text = document.name
+                if(document.desc.isNullOrEmpty()) {
                     view.label_document_description.hide()
                     view.document_details_description.hide()
                 } else {
                     view.label_document_description.show()
                     view.document_details_description.show()
-                    view.document_details_description.text = vm.document.desc
+                    view.document_details_description.text = document.desc
                 }
-                view.document_details_downloads.text = vm.document.downloads.toString()
+                view.document_details_downloads.text = document.downloads.toString()
+
+
+                RxView.clicks(view.button_read)
+                        .compose(bindToLifecycle())
+                        .subscribe {
+                            router.pushController(
+                                    RouterTransaction.with(ReaderController(document.fileUrl))
+                                            .popChangeHandler(HorizontalChangeHandler())
+                                            .pushChangeHandler(HorizontalChangeHandler())
+                            )
+                        }
             }
         }
     }

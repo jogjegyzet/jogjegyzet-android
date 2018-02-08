@@ -66,5 +66,11 @@
             android:layout_height="wrap_content"
             tools:text="1234324"/>
 
+        <Button
+            android:id="@+id/button_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/open"/>
+
     </LinearLayout>
 </FrameLayout>

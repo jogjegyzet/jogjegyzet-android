@@ -6,5 +6,5 @@
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:showAsAction="collapseActionView|ifRoom"
-        app:actionViewClass="com.gergelydaniel.jogjegyzet.FullWidthSearchView"/>
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
 </menu>

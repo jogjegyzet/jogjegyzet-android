@@ -1,4 +1,4 @@
-package com.gergelydaniel.jogjegyzet.di
+package com.gergelydaniel.jogjegyzet.di.mainactivity
 
 import com.gergelydaniel.jogjegyzet.ui.MainActivity
 import dagger.Subcomponent

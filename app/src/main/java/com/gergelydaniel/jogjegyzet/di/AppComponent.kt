@@ -4,6 +4,7 @@ import com.christianbahl.conductor.ConductorInjectionModule
 import com.gergelydaniel.jogjegyzet.App
 import com.gergelydaniel.jogjegyzet.di.categorycontroller.CategoryControllerModule
 import com.gergelydaniel.jogjegyzet.di.documentcontroller.DocumentControllerModule
+import com.gergelydaniel.jogjegyzet.di.mainactivity.MainActivityModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule

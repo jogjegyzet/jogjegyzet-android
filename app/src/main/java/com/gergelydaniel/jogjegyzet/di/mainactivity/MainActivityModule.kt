@@ -1,4 +1,4 @@
-package com.gergelydaniel.jogjegyzet.di
+package com.gergelydaniel.jogjegyzet.di.mainactivity
 
 import android.app.Activity
 import com.gergelydaniel.jogjegyzet.ui.MainActivity

@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         val item = menu!!.findItem(R.id.menuSearch)
         val searchView = item.actionView as SearchView
 
+        searchView.maxWidth = Integer.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 Log.i("SEARCH", "submit: $p0")

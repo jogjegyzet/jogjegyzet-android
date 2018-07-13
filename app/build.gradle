@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.bluelinelabs:conductor-rxlifecycle2:2.1.4'
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.0'
 

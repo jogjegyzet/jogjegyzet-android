@@ -40,9 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
         router.addChangeListener(object : ControllerChangeHandler.ControllerChangeListener {
             override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
-                val isHome = to is CategoryController && to.catId == null
-                supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
-                searchItem?.isVisible = isHome
+                setActionBarButtons()
 
                 if(to !is SearchController) {
                     searchView?.setQuery("", false)
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if(to is TitleProvider) {
-                    titleSub = to.title.subscribe { supportActionBar?.title = it }
+                    titleSub = subscribeToTitle(to)
                 } else {
                     supportActionBar?.setTitle(R.string.app_name)
                 }
@@ -65,7 +63,26 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+
+        setActionBarButtons()
+
+        if(titleSub == null) {
+            val current = router.backstack.last().controller()
+            if (current is TitleProvider) {
+                titleSub = subscribeToTitle(current)
+            }
+        }
     }
+
+    private fun setActionBarButtons() {
+        val current = router.backstack.last().controller()
+
+        val isHome = current is CategoryController && current.catId == null
+        supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
+        searchItem?.isVisible = isHome
+    }
+
+    private fun subscribeToTitle(provider: TitleProvider) = provider.title.subscribe { supportActionBar?.title = it }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) {
     fun getCategory(id: String): Maybe<Category> = retrofitClient.getCategory(id).flatMapMaybe {
         when {
-            it.isSuccessful -> Maybe.just(it.body())
+            it.isSuccessful -> Maybe.just(it.body()!!)
             it.code() == 404 -> Maybe.empty()
             else -> throw Exception() //TODO
         }
@@ -21,7 +21,7 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
     fun getCategories(): Single<List<Category>> =
             retrofitClient.getCategories().map {
                 if (it.isSuccessful) {
-                    it.body()
+                    it.body()!!
                 } else {
                     throw Exception() //TODO
                 }
@@ -30,7 +30,7 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
     fun getDocumentsInCategory(categoryId: String): Single<List<Document>> =
             retrofitClient.getDocumentsInCategory(categoryId).map {
                 if (it.isSuccessful) {
-                    it.body()
+                    it.body()!!
                 } else {
                     throw Exception() //TODO
                 }
@@ -40,7 +40,7 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
     fun getDocument(id: String): Single<Document> =
             retrofitClient.getDocument(id).map {
                 if (it.isSuccessful) {
-                    it.body()
+                    it.body()!!
                 } else {
                     throw Exception() //TODO
                 }
@@ -49,7 +49,7 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
     fun search(query: String): Single<List<SearchResult>> =
             retrofitClient.search(query).map {
                 if (it.isSuccessful) {
-                    it.body()
+                    it.body()!!
                 } else {
                     throw Exception() //TODO
                 }

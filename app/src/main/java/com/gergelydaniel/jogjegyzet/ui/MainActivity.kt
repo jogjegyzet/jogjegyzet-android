@@ -99,6 +99,8 @@ class MainActivity : AppCompatActivity() {
         searchView = searchItem!!.actionView as SearchView
         val searchView = searchView!!
 
+        setActionBarButtons()
+
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {

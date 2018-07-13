@@ -85,7 +85,6 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
         super.onSaveViewState(view, outState)
         val mListState = linearLayoutManager.onSaveInstanceState();
         outState.putParcelable(KEY_SCROLL, mListState)
-        Log.i("ASDASD", "onSaveViewState")
 
     }
 

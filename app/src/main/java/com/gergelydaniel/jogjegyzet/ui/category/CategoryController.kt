@@ -9,18 +9,23 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.BaseController
+import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
 
-class CategoryController(val catId: String? = null) : BaseController() {
+class CategoryController(val catId: String? = null) : BaseController(), TitleProvider {
     @Inject
     internal lateinit var presenter: CategoryPresenter
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: BrowserAdapter
+
+    private val titleSubject: BehaviorSubject<String> = BehaviorSubject.create()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return inflater.inflate(R.layout.controller_main, container, false)
@@ -29,6 +34,9 @@ class CategoryController(val catId: String? = null) : BaseController() {
     override fun onFirstAttach() {
         ConductorInjection.inject(this)
     }
+
+    override val title: Observable<String>
+        get() = titleSubject
 
     override fun onAttach(view: View) {
         super.onAttach(view)
@@ -60,6 +68,10 @@ class CategoryController(val catId: String? = null) : BaseController() {
         presenter.getViewModel(catId)
                 .compose(bindToLifecycle())
                 .subscribe(::render)
+
+        presenter.title
+                .compose(bindToLifecycle())
+                .subscribe {titleSubject.onNext(it) }
     }
 
     private fun render(vm: ViewModel) {

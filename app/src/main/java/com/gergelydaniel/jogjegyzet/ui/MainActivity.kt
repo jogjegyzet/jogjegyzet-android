@@ -40,10 +40,6 @@ class MainActivity : AppCompatActivity() {
         }
         router.addChangeListener(object : ControllerChangeHandler.ControllerChangeListener {
             override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
-
-            }
-
-            override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
                 val isHome = to is CategoryController && to.catId == null
                 supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
                 searchItem?.isVisible = isHome
@@ -63,6 +59,10 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     supportActionBar?.setTitle(R.string.app_name)
                 }
+            }
+
+            override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
+
             }
         })
     }

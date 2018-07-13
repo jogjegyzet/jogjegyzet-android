@@ -16,6 +16,7 @@ import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_document.view.*
 import javax.inject.Inject
 
@@ -40,8 +41,10 @@ class DocumentController : BaseController, TitleProvider {
 
     constructor(args: Bundle) : this(args.getString(KEY_ID))
 
+
+    private val titleSubject: BehaviorSubject<String> = BehaviorSubject.create()
     override val title: Observable<String>
-        get() = presenter.title
+        get() = titleSubject
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return inflater.inflate(R.layout.controller_document, container, false)
@@ -63,6 +66,10 @@ class DocumentController : BaseController, TitleProvider {
         obs
                 .compose(bindToLifecycle())
                 .subscribe(::render)
+
+        presenter.title
+                .compose(bindToLifecycle())
+                .subscribe { titleSubject.onNext(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

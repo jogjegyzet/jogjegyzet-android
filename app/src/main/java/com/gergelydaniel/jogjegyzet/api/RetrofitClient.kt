@@ -14,7 +14,7 @@ interface RetrofitClient {
     fun getCategories(): Single<Response<List<Category>>>
 
     @GET("categories/{id}")
-    fun getCategory(@Path("id") id: String): Single<Response<Category>>
+    fun getCategory(@Path("id") id: String): Single<Response<Category?>>
 
     @GET("categories/{id}/documents")
     fun getDocumentsInCategory(@Path("id") id: String): Single<Response<List<Document>>>

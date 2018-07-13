@@ -2,6 +2,7 @@ package com.gergelydaniel.jogjegyzet.api
 
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
+import com.gergelydaniel.jogjegyzet.domain.SearchResult
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,5 +37,13 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
                 }
             }
 
+    fun search(query: String) : Single<List<SearchResult>> =
+            retrofitClient.search(query).map {
+                if(it.isSuccessful) {
+                    it.body()
+                } else {
+                    throw Exception() //TODO
+                }
+            }
 
 }

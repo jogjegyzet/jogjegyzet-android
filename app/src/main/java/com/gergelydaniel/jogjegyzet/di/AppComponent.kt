@@ -5,6 +5,7 @@ import com.gergelydaniel.jogjegyzet.App
 import com.gergelydaniel.jogjegyzet.di.categorycontroller.CategoryControllerModule
 import com.gergelydaniel.jogjegyzet.di.documentcontroller.DocumentControllerModule
 import com.gergelydaniel.jogjegyzet.di.mainactivity.MainActivityModule
+import com.gergelydaniel.jogjegyzet.di.searchcontroller.SearchControllerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -20,6 +21,7 @@ import javax.inject.Singleton
     MainActivityModule::class,
     CategoryControllerModule::class,
     DocumentControllerModule::class,
+    SearchControllerModule::class,
     ConfigModule::class,
     RetrofitModule::class])
 interface AppComponent {

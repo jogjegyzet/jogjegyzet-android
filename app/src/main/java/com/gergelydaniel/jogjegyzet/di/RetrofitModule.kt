@@ -2,6 +2,8 @@ package com.gergelydaniel.jogjegyzet.di
 
 import com.gergelydaniel.jogjegyzet.api.RetrofitClient
 import com.gergelydaniel.jogjegyzet.api.gson.LocalDateTimeTypeAdapter
+import com.gergelydaniel.jogjegyzet.api.gson.SearchResultDeserializer
+import com.gergelydaniel.jogjegyzet.domain.SearchResult
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -20,6 +22,7 @@ class RetrofitModule {
     fun provideGson(): Gson
             = GsonBuilder()
             .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
+            .registerTypeAdapter(SearchResult::class.java, SearchResultDeserializer())
             .create()
 
     @Provides

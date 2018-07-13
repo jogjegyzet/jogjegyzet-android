@@ -28,11 +28,10 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
 
 
         return Observables.combineLatest(
-                catObs, docObs,
-                { cats, docs ->
-                    ViewModel.Data(cats.sortedBy { it.name }, docs.sortedBy { it.name }) as ViewModel
-                }
-        )
+                catObs, docObs
+        ) { cats, docs ->
+            ViewModel.Data(cats.sortedBy { it.name }, docs.sortedBy { it.name }) as ViewModel
+        }
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

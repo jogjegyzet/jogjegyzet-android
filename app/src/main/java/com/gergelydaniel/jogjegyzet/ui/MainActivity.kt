@@ -8,14 +8,19 @@ import android.view.Menu
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.TransitionChangeHandler
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
+import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var router :Router
+
+    private var searchController = SearchController()
+    private var searching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +44,33 @@ class MainActivity : AppCompatActivity() {
 
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                Log.i("SEARCH", "submit: $p0")
+            override fun onQueryTextSubmit(q: String): Boolean {
+                Log.i("SEARCH", "submit: $q")
+
 
                 return false
             }
 
-            override fun onQueryTextChange(p0: String?): Boolean {
-                Log.i("SEARCH", "change: $p0")
+            override fun onQueryTextChange(q: String): Boolean {
+                Log.i("SEARCH", "change: $q")
+
+                if(q.isNotEmpty()) {
+                    if(searchController.isDestroyed || searchController.isBeingDestroyed) {
+                        searchController = SearchController()
+                    }
+
+                    if(! searching) {
+                        router.pushController(RouterTransaction.with(searchController))
+                        searching = true
+                    }
+
+                    searchController.query = q
+                } else {
+                    if(searching) {
+                        router.popCurrentController()
+                        searching = false
+                    }
+                }
 
                 return false
             }

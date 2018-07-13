@@ -1,4 +1,4 @@
-package com.gergelydaniel.jogjegyzet.ui.category
+package com.gergelydaniel.jogjegyzet.ui.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -23,7 +23,7 @@ internal class DocumentViewHolder(view: View) : ViewHolder(view) {
 private const val TYPE_CATEGORY = 1
 private const val TYPE_DOCUMENT = 2
 
-class CategoryAdapter : RecyclerView.Adapter<ViewHolder>() {
+class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
     var onClickListener : ((Either<Category, Document>) -> Unit)? = null
 
     var data: List<Either<Category, Document>> = listOf()

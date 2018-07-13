@@ -108,6 +108,9 @@ class DocumentController : BaseController, TitleProvider {
                 }
                 view.document_details_downloads.text = document.downloads.toString()
 
+                view.num_likes.text = document.posRatings.toString()
+                view.num_dislikes.text = document.negRatings.toString()
+                view.rating_bar.setData(document.posRatings, document.negRatings)
 
                 RxView.clicks(view.button_read)
                         .compose(bindToLifecycle())

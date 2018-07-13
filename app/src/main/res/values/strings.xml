@@ -8,4 +8,7 @@
     <string name="error">Hiba!</string>
     <string name="open">Megnyitás</string>
     <string name="noresult">Nincs találat a %s kifejezésre</string>
+    <string name="thumpsup">thumpsup</string>
+    <string name="thumpsdown">thumpsdown</string>
+    <string name="ratings">Értékelések</string>
 </resources>

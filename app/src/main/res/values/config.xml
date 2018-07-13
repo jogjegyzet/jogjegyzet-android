@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="base_url">http://192.168.0.17:8080/v0/</string>
+    <string name="base_url">https://api.jogjegyzet.hu/v0/</string>
 </resources>

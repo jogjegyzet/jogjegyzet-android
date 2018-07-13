@@ -9,4 +9,6 @@ data class Document(val id: String,
                     val date: LocalDateTime,
                     val size: Long,
                     val downloads: Int,
-                    val desc: String?)
+                    val desc: String?,
+                    val posRatings: Int,
+                    val negRatings: Int)

@@ -1,12 +1,11 @@
 package com.gergelydaniel.jogjegyzet.ui.reader
 
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
+import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,11 +14,16 @@ import java.net.URL
 
 
 private const val KEY_URL = "url"
+private const val KEY_TITLE = "title"
 
-class ReaderController(private val url: String) : Controller() {
+class ReaderController(private val url: String, private val docTitle: String) : Controller(), TitleProvider {
     private lateinit var pdfView: PDFView
 
-    constructor(args: Bundle) : this(args.getString(KEY_URL))
+    constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE))
+
+    override val title: Observable<String>
+        get() = Observable.just(docTitle)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         pdfView = PDFView(inflater.context, null)
@@ -48,6 +52,7 @@ class ReaderController(private val url: String) : Controller() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(KEY_URL, url)
+        outState.putString(KEY_TITLE, docTitle)
     }
 
     override fun onSaveViewState(view: View, outState: Bundle) {

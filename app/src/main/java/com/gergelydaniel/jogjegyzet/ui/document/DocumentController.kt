@@ -8,21 +8,40 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
+import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.ui.BaseController
+import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.reader.ReaderController
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
 import com.jakewharton.rxbinding2.view.RxView
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.controller_document.view.*
 import javax.inject.Inject
 
 private const val KEY_ID = "docId"
 
-class DocumentController(private val docId : String) : BaseController() {
+class DocumentController : BaseController, TitleProvider {
     @Inject
     internal lateinit var presenter : DocumentPresenter
 
+    private val docId : String
+    private val document: Document?
+
+    constructor(docId: String) {
+        this.docId = docId
+        this.document = null
+    }
+
+    constructor(document: Document) {
+        this.docId = document.id
+        this.document = document
+    }
+
     constructor(args: Bundle) : this(args.getString(KEY_ID))
+
+    override val title: Observable<String>
+        get() = presenter.title
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return inflater.inflate(R.layout.controller_document, container, false)
@@ -36,7 +55,12 @@ class DocumentController(private val docId : String) : BaseController() {
         super.onAttach(view)
 
 
-        presenter.getViewModel(docId)
+        val obs = if(document != null)
+            presenter.getViewModel(document)
+        else
+            presenter.getViewModel(docId)
+
+        obs
                 .compose(bindToLifecycle())
                 .subscribe(::render)
     }
@@ -82,7 +106,7 @@ class DocumentController(private val docId : String) : BaseController() {
                         .compose(bindToLifecycle())
                         .subscribe {
                             router.pushController(
-                                    RouterTransaction.with(ReaderController(document.fileUrl))
+                                    RouterTransaction.with(ReaderController(document.fileUrl, document.name))
                                             .popChangeHandler(HorizontalChangeHandler())
                                             .pushChangeHandler(HorizontalChangeHandler())
                             )

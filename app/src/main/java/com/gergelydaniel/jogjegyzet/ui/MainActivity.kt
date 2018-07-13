@@ -3,25 +3,34 @@ package com.gergelydaniel.jogjegyzet.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var router: Router
+
     var searchView: SearchView? = null
+    var searchItem: MenuItem? = null
+
+    var titleSub: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
 
         AndroidInjection.inject(this)
 
@@ -35,19 +44,42 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
-                if(to!! !is SearchController) {
+                val isHome = to is CategoryController && to.catId == null
+                supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
+                searchItem?.isVisible = isHome
+
+                if(to !is SearchController) {
                     searchView?.setQuery("", false)
                     searchView?.clearFocus()
+                }
+
+                val sub = titleSub
+                if(sub != null && !sub.isDisposed) {
+                    sub.dispose()
+                }
+
+                if(to is TitleProvider) {
+                    titleSub = to.title.subscribe { supportActionBar?.title = it }
+                } else {
+                    supportActionBar?.setTitle(R.string.app_name)
                 }
             }
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        val sub = titleSub
+        if(sub != null && !sub.isDisposed) {
+            sub.dispose()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        val item = menu!!.findItem(R.id.menuSearch)
-        searchView = item.actionView as SearchView
+        searchItem = menu!!.findItem(R.id.menuSearch)
+        searchView = searchItem!!.actionView as SearchView
         val searchView = searchView!!
 
         searchView.maxWidth = Integer.MAX_VALUE

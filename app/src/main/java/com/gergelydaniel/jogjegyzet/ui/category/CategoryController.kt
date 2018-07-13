@@ -15,7 +15,7 @@ import com.gergelydaniel.jogjegyzet.util.Either
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
 
-class CategoryController(private val catId: String? = null) : BaseController() {
+class CategoryController(val catId: String? = null) : BaseController() {
     @Inject
     internal lateinit var presenter: CategoryPresenter
 
@@ -49,7 +49,7 @@ class CategoryController(private val catId: String? = null) : BaseController() {
                 }
                 is Either.Right -> {
                     router.pushController(
-                            RouterTransaction.with(DocumentController(it.value.id))
+                            RouterTransaction.with(DocumentController(it.value))
                                     .popChangeHandler(HorizontalChangeHandler())
                                     .pushChangeHandler(HorizontalChangeHandler())
                     )

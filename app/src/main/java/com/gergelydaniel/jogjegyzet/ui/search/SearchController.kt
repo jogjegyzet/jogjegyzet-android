@@ -1,6 +1,8 @@
 package com.gergelydaniel.jogjegyzet.ui.search
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +16,11 @@ import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
-import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
 
+private const val KEY_QUERY = "QUERY"
 class SearchController : BaseController() {
     @Inject
     internal lateinit var presenter : SearchPresenter
@@ -28,28 +30,55 @@ class SearchController : BaseController() {
 
     var viewModelSub : Disposable? = null
 
-    var query : String = ""
+    var q: String? = null
+
+    var query : String
+        get() = q ?: throw IllegalStateException()
         set(value) {
-            field = value
-
-            viewModelSub?.dispose()
-
-            viewModelSub = presenter.getViewModel(query)
-                    .compose(bindToLifecycle())
-                    .subscribe(::render)
+            q = value
+            subscribe(value)
         }
 
+    init {
+        Log.i("ASD", "init")
+    }
+
+    private fun subscribe(query: String) {
+        viewModelSub?.dispose()
+
+        viewModelSub = presenter.getViewModel(query)
+                .compose(bindToLifecycle())
+                .subscribe(::render)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Log.i("ASD", "onCreateView")
         return inflater.inflate(R.layout.controller_main, container, false)
     }
 
     override fun onFirstAttach() {
         ConductorInjection.inject(this)
+        Log.i("ASD", "onFirstAttach")
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.i("ASD", "onSave")
+        outState.putString(KEY_QUERY, query)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.i("ASD", "onRestore")
+
+        query = savedInstanceState.getString(KEY_QUERY)
+    }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
+
+        Log.i("ASD", "onAttach")
+
 
         linearLayoutManager = LinearLayoutManager(view.context)
         view.recycler_view.layoutManager = linearLayoutManager
@@ -68,13 +97,15 @@ class SearchController : BaseController() {
                 }
                 is Either.Right -> {
                     router.pushController(
-                            RouterTransaction.with(DocumentController(it.value.id))
+                            RouterTransaction.with(DocumentController(it.value))
                                     .popChangeHandler(HorizontalChangeHandler())
                                     .pushChangeHandler(HorizontalChangeHandler())
                     )
                 }
             }
         }
+
+        q?.let (this::subscribe)
     }
 
     private fun render(vm: ViewModel) {
@@ -103,7 +134,7 @@ class SearchController : BaseController() {
                 view.category_progress.visibility = View.GONE
                 view.text.visibility = View.VISIBLE
 
-                view.text.text = view.context.getString(R.string.noresult, query)
+                view.text.text = view.context.getString(R.string.noresult, q)
             }
         }
     }

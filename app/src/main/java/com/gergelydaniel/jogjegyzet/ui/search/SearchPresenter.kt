@@ -11,7 +11,13 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient) {
     fun getViewModel(query: String): Observable<ViewModel> {
         return apiClient.search(query)
                 .toObservable()
-                .map { ViewModel.Data(it) as ViewModel }
+                .map {
+                    if(it.isEmpty()) {
+                        ViewModel.Empty()
+                    } else {
+                        ViewModel.Data(it)
+                    }
+                }
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -21,4 +27,5 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient) {
 sealed class ViewModel {
     class Loading : ViewModel()
     class Data(val data: List<SearchResult>) : ViewModel()
+    class Empty : ViewModel()
 }

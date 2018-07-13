@@ -3,12 +3,9 @@ package com.gergelydaniel.jogjegyzet.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.Menu
-import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.TransitionChangeHandler
+import android.view.ViewGroup
+import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.search.SearchController
@@ -17,10 +14,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var router :Router
-
-    private var searchController = SearchController()
-    private var searching = false
+    private lateinit var router: Router
+    var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,41 +29,52 @@ class MainActivity : AppCompatActivity() {
         if (!router.hasRootController()) {
             router.setRoot(RouterTransaction.with(CategoryController()))
         }
+        router.addChangeListener(object : ControllerChangeHandler.ControllerChangeListener {
+            override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
+
+            }
+
+            override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
+                if(to!! !is SearchController) {
+                    searchView?.setQuery("", false)
+                    searchView?.clearFocus()
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
         val item = menu!!.findItem(R.id.menuSearch)
-        val searchView = item.actionView as SearchView
+        searchView = item.actionView as SearchView
+        val searchView = searchView!!
 
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
-                Log.i("SEARCH", "submit: $q")
 
 
                 return false
             }
 
             override fun onQueryTextChange(q: String): Boolean {
-                Log.i("SEARCH", "change: $q")
+                if (q.isNotEmpty()) {
 
-                if(q.isNotEmpty()) {
-                    if(searchController.isDestroyed || searchController.isBeingDestroyed) {
-                        searchController = SearchController()
-                    }
+                    val currentController = router.backstack.last().controller()
 
-                    if(! searching) {
-                        router.pushController(RouterTransaction.with(searchController))
-                        searching = true
+                    val searchController = if (currentController !is SearchController) {
+                        val newController = SearchController()
+                        router.pushController(RouterTransaction.with(newController))
+                        newController
+                    } else {
+                        currentController
                     }
 
                     searchController.query = q
                 } else {
-                    if(searching) {
+                    if (router.backstack[0].controller() is SearchController) {
                         router.popCurrentController()
-                        searching = false
                     }
                 }
 
@@ -80,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(! router.handleBack()){
+        if (!router.handleBack()) {
             super.onBackPressed()
         }
     }

@@ -7,4 +7,5 @@
     <string name="num_downloads">Letöltések száma</string>
     <string name="error">Hiba!</string>
     <string name="open">Megnyitás</string>
+    <string name="noresult">Nincs találat a %s kifejezésre</string>
 </resources>

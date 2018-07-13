@@ -78,15 +78,18 @@ class SearchController : BaseController() {
     }
 
     private fun render(vm: ViewModel) {
+        val view = view!!
         when(vm) {
             is ViewModel.Loading -> {
-                view!!.recycler_view.visibility = View.GONE
-                view!!.category_progress.visibility = View.VISIBLE
+                view.recycler_view.visibility = View.GONE
+                view.category_progress.visibility = View.VISIBLE
+                view.text.visibility = View.GONE
             }
             is ViewModel.Data -> {
 
-                view!!.recycler_view.visibility = View.VISIBLE
-                view!!.category_progress.visibility = View.GONE
+                view.recycler_view.visibility = View.VISIBLE
+                view.category_progress.visibility = View.GONE
+                view.text.visibility = View.GONE
 
                 adapter.data = vm.data.map {
                     when(it) {
@@ -94,6 +97,13 @@ class SearchController : BaseController() {
                         is SearchResult.CategoryResult -> Either.Left(it.category)
                     }
                 }
+            }
+            is ViewModel.Empty -> {
+                view.recycler_view.visibility = View.GONE
+                view.category_progress.visibility = View.GONE
+                view.text.visibility = View.VISIBLE
+
+                view.text.text = view.context.getString(R.string.noresult, query)
             }
         }
     }

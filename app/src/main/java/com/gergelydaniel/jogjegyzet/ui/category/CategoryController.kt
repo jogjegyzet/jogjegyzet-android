@@ -67,11 +67,13 @@ class CategoryController(private val catId: String? = null) : BaseController() {
             is ViewModel.Loading -> {
                 view!!.recycler_view.visibility = View.GONE
                 view!!.category_progress.visibility = View.VISIBLE
+                view!!.text.visibility = View.GONE
             }
             is ViewModel.Data -> {
 
                 view!!.recycler_view.visibility = View.VISIBLE
                 view!!.category_progress.visibility = View.GONE
+                view!!.text.visibility = View.GONE
 
                 adapter.data = vm.categories.map { Either.Left(it) }.plus(vm.documents.map { Either.Right(it) })
             }

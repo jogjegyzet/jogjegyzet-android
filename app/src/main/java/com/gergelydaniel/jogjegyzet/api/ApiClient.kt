@@ -3,6 +3,7 @@ package com.gergelydaniel.jogjegyzet.api
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.domain.SearchResult
+import com.gergelydaniel.jogjegyzet.domain.User
 import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.inject.Inject
@@ -55,4 +56,13 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
                 }
             }
 
+
+    fun getUser(id: String): Single<User> =
+            retrofitClient.getUser(id).map {
+                if (it.isSuccessful) {
+                    it.body()!!
+                } else {
+                    throw Exception() //TODO
+                }
+            }
 }

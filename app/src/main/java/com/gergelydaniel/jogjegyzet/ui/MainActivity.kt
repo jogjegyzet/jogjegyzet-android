@@ -3,10 +3,8 @@ package com.gergelydaniel.jogjegyzet.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
@@ -42,9 +40,11 @@ class MainActivity : AppCompatActivity() {
             override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
                 setActionBarButtons()
 
-                if(to !is SearchController) {
+                if(to !is SearchController && from is SearchController) {
                     searchView?.setQuery("", false)
                     searchView?.clearFocus()
+
+                    searchItem?.collapseActionView()
                 }
 
                 val sub = titleSub

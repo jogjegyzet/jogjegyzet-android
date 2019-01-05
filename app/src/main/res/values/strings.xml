@@ -11,4 +11,5 @@
     <string name="thumpsup">thumpsup</string>
     <string name="thumpsdown">thumpsdown</string>
     <string name="ratings">Értékelések</string>
+    <string name="emptycat">Ide még nem töltöttek fel dokumentumot és nem alakítottak ki kategóriát.</string>
 </resources>

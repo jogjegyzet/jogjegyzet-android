@@ -3,7 +3,6 @@ package com.gergelydaniel.jogjegyzet.ui.category
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -101,8 +100,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
                 view.category_progress.visibility = View.VISIBLE
                 view.text.visibility = View.GONE
             }
-            is ViewModel.Data -> {
-
+            is ViewModel.NonEmpty -> {
                 view.recycler_view.visibility = View.VISIBLE
                 view.category_progress.visibility = View.GONE
                 view.text.visibility = View.GONE
@@ -110,6 +108,13 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
                 adapter.data = vm.categories.map { Either.Left(it) }.plus(vm.documents.map { Either.Right(it) })
 
                 restoreScrollState()
+            }
+            is ViewModel.Empty -> {
+                view.recycler_view.visibility = View.GONE
+                view.category_progress.visibility = View.GONE
+                view.text.visibility = View.VISIBLE
+
+                view.text.setText(R.string.emptycat)
             }
         }
     }

@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setActionBarButtons() {
-        val current = router.backstack.last().controller()
+        val current = if (router.backstack.isEmpty()) null else router.backstack.last().controller()
 
         val isHome = current is CategoryController && current.catId == null
         supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)

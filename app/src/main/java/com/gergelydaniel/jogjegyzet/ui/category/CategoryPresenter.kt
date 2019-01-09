@@ -1,6 +1,7 @@
 package com.gergelydaniel.jogjegyzet.ui.category
 
 import android.content.Context
+import android.view.View
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
@@ -49,6 +50,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                 ViewModel.Empty()
             }
         }
+                .onErrorReturn { ViewModel.Error(it) }
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -58,5 +60,6 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
 sealed class ViewModel {
     class Loading : ViewModel()
     class NonEmpty(val categories: List<Category>, val documents: List<Document>) : ViewModel()
+    class Error(val error: Throwable) : ViewModel()
     class Empty : ViewModel()
 }

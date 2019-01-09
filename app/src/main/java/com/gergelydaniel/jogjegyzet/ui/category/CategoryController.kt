@@ -10,6 +10,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
+import com.gergelydaniel.jogjegyzet.domain.NoInternetException
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
@@ -53,7 +54,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
         view.recycler_view.adapter = adapter
 
         adapter.onClickListener = {
-            when(it) {
+            when (it) {
                 is Either.Left -> {
                     router.pushController(
                             RouterTransaction.with(CategoryController(it.value.id))
@@ -77,7 +78,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
 
         presenter.title
                 .compose(bindToLifecycle())
-                .subscribe {titleSubject.onNext(it) }
+                .subscribe { titleSubject.onNext(it) }
     }
 
     override fun onSaveViewState(view: View, outState: Bundle) {
@@ -94,7 +95,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
 
     private fun render(vm: ViewModel) {
         val view = view!!
-        when(vm) {
+        when (vm) {
             is ViewModel.Loading -> {
                 view.recycler_view.visibility = View.GONE
                 view.category_progress.visibility = View.VISIBLE
@@ -115,6 +116,18 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
                 view.text.visibility = View.VISIBLE
 
                 view.text.setText(R.string.emptycat)
+            }
+            is ViewModel.Error -> {
+                view.recycler_view.visibility = View.GONE
+                view.category_progress.visibility = View.GONE
+                view.text.visibility = View.VISIBLE
+
+                view.text.setText(
+                        when (vm.error) {
+                            is NoInternetException -> R.string.nointernet
+                            else -> R.string.cat_error
+                        }
+                )
             }
         }
     }

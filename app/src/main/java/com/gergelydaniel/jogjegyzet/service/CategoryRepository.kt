@@ -2,11 +2,15 @@ package com.gergelydaniel.jogjegyzet.service
 
 import com.gergelydaniel.jogjegyzet.api.ApiClient
 import com.gergelydaniel.jogjegyzet.domain.Category
+import com.gergelydaniel.jogjegyzet.domain.NoInternetException
 import com.gergelydaniel.jogjegyzet.util.maybeFromNullable
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,23 +19,40 @@ class CategoryRepository @Inject constructor(private val apiClient: ApiClient) {
     private val cache: BehaviorSubject<List<Category>> = BehaviorSubject.createDefault(listOf())
 
     init {
-        update()
+        update().subscribe({}, {}) // We ignore results here
     }
 
-    fun update() {
-        apiClient.getCategories()
-                .subscribeOn(Schedulers.io())
-                .subscribe { cats -> cache.onNext(cats) }
-    }
+    private fun downloadCategories() = apiClient.getCategories()
+            .onErrorResumeNext { error ->
+                when (error) {
+                    is UnknownHostException -> Single.error(NoInternetException())
+                    else -> Single.error(error)
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .doOnSuccess { cache.onNext(it) }
 
-    fun getRootCategories(): Observable<List<Category>>
-            = cache.map { it.filter { it.parentId.nullOrEmpty() } }
+    fun update(): Completable = downloadCategories()
+            .ignoreElement()
 
-    fun getSubCategories(parentId: String): Observable<List<Category>>
-            = cache.map { it.filter { parentId == it.parentId } }
+
+    private fun getCategories() = cache.switchIfEmpty(downloadCategories().toObservable())
+            .switchMap {
+                if (it.isEmpty()) {
+                    downloadCategories().toObservable()
+                } else {
+                    Observable.just(it)
+                }
+            }
+
+    fun getRootCategories(): Observable<List<Category>> = getCategories()
+            .map { it.filter { it.parentId.nullOrEmpty() } }
+
+
+    fun getSubCategories(parentId: String): Observable<List<Category>> = getCategories().map { it.filter { parentId == it.parentId } }
 
     fun getCategory(id: String): Maybe<Category> {
-        return cache.flatMapMaybe {
+        return getCategories().flatMapMaybe {
             maybeFromNullable(it.firstOrNull { it.id == id })
         }.switchIfEmpty(apiClient.getCategory(id).toObservable()).firstElement()
 

@@ -1,10 +1,11 @@
 package com.gergelydaniel.jogjegyzet.ui.reader
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.Controller
+import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
@@ -16,7 +17,7 @@ import java.net.URL
 private const val KEY_URL = "url"
 private const val KEY_TITLE = "title"
 
-class ReaderController(private val url: String, private val docTitle: String) : Controller(), TitleProvider {
+class ReaderController(private val url: String, private val docTitle: String) : BaseController(), TitleProvider {
     private lateinit var pdfView: PDFView
 
     constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE))
@@ -31,6 +32,7 @@ class ReaderController(private val url: String, private val docTitle: String) : 
         return pdfView
     }
 
+    @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
 
@@ -39,6 +41,7 @@ class ReaderController(private val url: String, private val docTitle: String) : 
         Observable.fromCallable { URL(url).openStream() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(bindToLifecycle())
                 .subscribe {
                     pdfView.fromStream(it)
                             .onPageError { i, t ->

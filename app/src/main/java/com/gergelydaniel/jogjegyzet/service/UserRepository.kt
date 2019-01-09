@@ -13,8 +13,8 @@ class UserRepository @Inject constructor(private val apiClient: ApiClient) {
 
     fun getUser(id: String): Observable<User> {
         return Observable.defer {
-            val cached :User? = cache.get(id)
-            if(cached != null) {
+            val cached: User? = cache.get(id)
+            if (cached != null) {
                 Observable.just(cached)
             } else {
                 apiClient.getUser(id).toObservable()

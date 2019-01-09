@@ -1,5 +1,6 @@
 package com.gergelydaniel.jogjegyzet.ui.category
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
@@ -45,6 +46,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
     override val title: Observable<String>
         get() = titleSubject
 
+    @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
 

@@ -1,5 +1,6 @@
 package com.gergelydaniel.jogjegyzet.ui.document
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,6 +55,7 @@ class DocumentController : BaseController, TitleProvider {
         ConductorInjection.inject(this)
     }
 
+    @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
 

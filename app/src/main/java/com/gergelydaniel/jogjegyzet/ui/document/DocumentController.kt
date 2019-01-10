@@ -126,7 +126,7 @@ class DocumentController : BaseController, TitleProvider {
                         view.comments.text = if (vm.comments.comments.isEmpty())
                             "Nincs comment"
                         else
-                            vm.comments.comments.map { "${it.date}: ${it.message}" }.fold("") { acc, n -> acc + "\n" + n}
+                            vm.comments.comments.map { "${it.user?.name}: ${it.comment.message}" }.fold("") { acc, n -> acc + "\n" + n}
                     }
                 }
 

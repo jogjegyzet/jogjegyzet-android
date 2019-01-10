@@ -2,9 +2,13 @@ package com.gergelydaniel.jogjegyzet.ui.document
 
 import com.gergelydaniel.jogjegyzet.domain.Comment
 import com.gergelydaniel.jogjegyzet.domain.Document
+import com.gergelydaniel.jogjegyzet.domain.User
 import com.gergelydaniel.jogjegyzet.service.CommentRepository
 import com.gergelydaniel.jogjegyzet.service.DocumentRepository
+import com.gergelydaniel.jogjegyzet.service.UserRepository
+import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
@@ -13,7 +17,8 @@ import javax.inject.Inject
 
 class DocumentPresenter @Inject constructor(
         private val documentRepository: DocumentRepository,
-        private val commentRepository: CommentRepository) {
+        private val commentRepository: CommentRepository,
+        private val userRepository: UserRepository) {
     private lateinit var docSubject: BehaviorSubject<Document>
 
     fun getViewModel(initial: Document): Observable<ViewModel> {
@@ -41,6 +46,17 @@ class DocumentPresenter @Inject constructor(
 
                 commentRepository.getCommentsForDocument(id)
                         .subscribeOn(Schedulers.io())
+                        .flatMap { comments ->
+                            val observables = comments.map { comment -> comment.user }
+                                    .filter { userId -> userId != null }
+                                    .distinct()
+                                    .map { userId -> userRepository.getUser(userId!!).firstOrError() }
+
+                            Single.merge(observables)
+                                    .collect({ mutableListOf<User>() }, { container, value -> container.add(value) })
+                                    .toObservable()
+                                    .map { users -> comments.map { c -> CommentViewModel(c, users.find { it.id == c.user }) } }
+                        }
                         .map { CommentsViewModel.Data(it) as CommentsViewModel }
                         .startWith(CommentsViewModel.Loading())
 
@@ -65,5 +81,7 @@ sealed class ViewModel {
 
 sealed class CommentsViewModel {
     class Loading: CommentsViewModel()
-    class Data(val comments: List<Comment>) : CommentsViewModel()
+    class Data(val comments: List<CommentViewModel>) : CommentsViewModel()
 }
+
+class CommentViewModel(val comment: Comment, val user: User?)

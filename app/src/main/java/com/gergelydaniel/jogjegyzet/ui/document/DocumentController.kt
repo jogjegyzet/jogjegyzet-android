@@ -17,6 +17,7 @@ import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_document.view.*
 import javax.inject.Inject
@@ -66,10 +67,12 @@ class DocumentController : BaseController, TitleProvider {
             presenter.getViewModel(docId)
 
         obs
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(bindToLifecycle())
                 .subscribe(::render)
 
         presenter.title
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(bindToLifecycle())
                 .subscribe { titleSubject.onNext(it) }
     }
@@ -113,6 +116,19 @@ class DocumentController : BaseController, TitleProvider {
                 view.num_likes.text = document.posRatings.toString()
                 view.num_dislikes.text = document.negRatings.toString()
                 view.rating_bar.setData(document.posRatings, document.negRatings)
+
+                when (vm.comments) {
+                    is CommentsViewModel.Loading -> {
+                        view.comments.text = "Loading..."
+                    }
+
+                    is CommentsViewModel.Data -> {
+                        view.comments.text = if (vm.comments.comments.isEmpty())
+                            "Nincs comment"
+                        else
+                            vm.comments.comments.map { "${it.date}: ${it.message}" }.fold("") { acc, n -> acc + "\n" + n}
+                    }
+                }
 
                 RxView.clicks(view.button_read)
                         .compose(bindToLifecycle())

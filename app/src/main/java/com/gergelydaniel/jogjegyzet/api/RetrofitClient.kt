@@ -1,9 +1,6 @@
 package com.gergelydaniel.jogjegyzet.api
 
-import com.gergelydaniel.jogjegyzet.domain.Category
-import com.gergelydaniel.jogjegyzet.domain.Document
-import com.gergelydaniel.jogjegyzet.domain.SearchResult
-import com.gergelydaniel.jogjegyzet.domain.User
+import com.gergelydaniel.jogjegyzet.domain.*
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
@@ -28,4 +25,7 @@ interface RetrofitClient {
 
     @GET("users/{id}")
     fun getUser(@Path("id") id: String): Single<Response<User>>
+
+    @GET("documents/{id}/comments")
+    fun getCommentsForDocument(@Path("id") documentId: String) : Single<Response<List<Comment>>>
 }

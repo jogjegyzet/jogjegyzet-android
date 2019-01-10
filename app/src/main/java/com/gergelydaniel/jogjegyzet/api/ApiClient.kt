@@ -1,11 +1,9 @@
 package com.gergelydaniel.jogjegyzet.api
 
-import com.gergelydaniel.jogjegyzet.domain.Category
-import com.gergelydaniel.jogjegyzet.domain.Document
-import com.gergelydaniel.jogjegyzet.domain.SearchResult
-import com.gergelydaniel.jogjegyzet.domain.User
+import com.gergelydaniel.jogjegyzet.domain.*
 import io.reactivex.Maybe
 import io.reactivex.Single
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,50 +17,32 @@ class ApiClient @Inject constructor(private val retrofitClient: RetrofitClient) 
         }
     }
 
+    private fun <T> handleError(response: Response<T>) : Single<T>
+        = if (response.isSuccessful) {
+            Single.just(response.body())
+        } else {
+            Single.error(Exception("Network error ${response.code()}"))
+        }
+
+
     fun getCategories(): Single<List<Category>> =
-            retrofitClient.getCategories().map {
-                if (it.isSuccessful) {
-                    it.body()!!
-                } else {
-                    throw Exception() //TODO
-                }
-            }
+            retrofitClient.getCategories().flatMap { handleError(it) }
 
     fun getDocumentsInCategory(categoryId: String): Single<List<Document>> =
-            retrofitClient.getDocumentsInCategory(categoryId).map {
-                if (it.isSuccessful) {
-                    it.body()!!
-                } else {
-                    throw Exception() //TODO
-                }
-            }
+            retrofitClient.getDocumentsInCategory(categoryId).flatMap { handleError(it) }
 
 
     fun getDocument(id: String): Single<Document> =
-            retrofitClient.getDocument(id).map {
-                if (it.isSuccessful) {
-                    it.body()!!
-                } else {
-                    throw Exception() //TODO
-                }
-            }
+            retrofitClient.getDocument(id).flatMap { handleError(it) }
 
     fun search(query: String): Single<List<SearchResult>> =
-            retrofitClient.search(query).map {
-                if (it.isSuccessful) {
-                    it.body()!!
-                } else {
-                    throw Exception() //TODO
-                }
-            }
+            retrofitClient.search(query).flatMap { handleError(it) }
 
 
     fun getUser(id: String): Single<User> =
-            retrofitClient.getUser(id).map {
-                if (it.isSuccessful) {
-                    it.body()!!
-                } else {
-                    throw Exception() //TODO
-                }
-            }
+            retrofitClient.getUser(id).flatMap { handleError(it) }
+
+    fun getCommentsForDocument(documentId: String) : Single<List<Comment>>
+        = retrofitClient.getCommentsForDocument(documentId)
+            .flatMap { handleError(it) }
 }

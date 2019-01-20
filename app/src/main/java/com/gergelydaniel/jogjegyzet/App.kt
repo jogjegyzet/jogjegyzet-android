@@ -13,8 +13,6 @@ import com.bluelinelabs.conductor.Controller
 
 
 class App : Application(), HasActivityInjector, HasControllerInjector {
-
-
     @Inject
     internal lateinit var androidInjector: DispatchingAndroidInjector<Activity>
 

@@ -16,8 +16,8 @@ class RatingBar @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    var positiveRatings = 0
-    var negativeRatings = 0
+    private var positiveRatings = 0
+    private var negativeRatings = 0
 
     private val likePaint : Paint = Paint()
     init {

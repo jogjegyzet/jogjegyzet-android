@@ -57,9 +57,4 @@ class ReaderController(private val url: String, private val docTitle: String) : 
         outState.putString(KEY_URL, url)
         outState.putString(KEY_TITLE, docTitle)
     }
-
-    override fun onSaveViewState(view: View, outState: Bundle) {
-        super.onSaveViewState(view, outState)
-    }
-
 }

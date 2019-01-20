@@ -28,14 +28,14 @@ class SearchController : BaseController() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: BrowserAdapter
 
-    var viewModelSub : Disposable? = null
+    private var viewModelSub : Disposable? = null
 
-    var q: String? = null
+    private var _query: String? = null
 
     var query : String
-        get() = q ?: throw IllegalStateException()
+        get() = _query ?: throw IllegalStateException()
         set(value) {
-            q = value
+            _query = value
             subscribe(value)
         }
 
@@ -105,7 +105,7 @@ class SearchController : BaseController() {
             }
         }
 
-        q?.let (this::subscribe)
+        _query?.let (this::subscribe)
     }
 
     private fun render(vm: ViewModel) {
@@ -134,7 +134,7 @@ class SearchController : BaseController() {
                 view.category_progress.visibility = View.GONE
                 view.text.visibility = View.VISIBLE
 
-                view.text.text = view.context.getString(R.string.noresult, q)
+                view.text.text = view.context.getString(R.string.noresult, _query)
             }
         }
     }

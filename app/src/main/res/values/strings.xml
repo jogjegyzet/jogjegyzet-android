@@ -11,6 +11,7 @@
     <string name="thumpsup">thumpsup</string>
     <string name="thumpsdown">thumpsdown</string>
     <string name="ratings">Értékelések</string>
+    <string name="comments">Hozzászólások</string>
     <string name="emptycat">Ide még nem töltöttek fel dokumentumot és nem alakítottak ki kategóriát.</string>
     <string name="nointernet">Hálózati hiba! Ellenőrizd az internetkapcsolatot</string>
     <string name="cat_error">Hiba a kategória megjelenítésekor</string>

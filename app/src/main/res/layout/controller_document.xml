@@ -21,12 +21,16 @@
         android:layout_height="match_parent"
         tools:visibility="gone"/>
     
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/document_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
 
         <TextView
             style="@style/SecondaryText"
@@ -126,19 +130,31 @@
         <com.gergelydaniel.jogjegyzet.ui.document.RatingBar
             android:id="@+id/rating_bar"
             android:layout_width="match_parent"
-            android:layout_height="8dp"/>
+            android:layout_height="8dp"
+            android:layout_marginBottom="10dp"/>
 
-        <Button
-            android:id="@+id/button_read"
-            android:layout_width="match_parent"
+        <TextView
+            style="@style/SecondaryText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/open"/>
+            android:text="@string/comments"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/comments"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"/>
 
-    </LinearLayout>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_play"
+            android:text="@string/open"/>
+
+    </FrameLayout>
 </FrameLayout>

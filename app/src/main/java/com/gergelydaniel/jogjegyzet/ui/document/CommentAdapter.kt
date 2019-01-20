@@ -4,13 +4,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.gergelydaniel.jogjegyzet.R
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_comment.view.*
 
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val name: TextView = view.text_name
     val comment: TextView = view.text_comment
+    val profilePic: ImageView = view.profile_pic
 }
 
 class CommentAdapter : RecyclerView.Adapter<ViewHolder>() {
@@ -31,7 +34,14 @@ class CommentAdapter : RecyclerView.Adapter<ViewHolder>() {
         val data = this.data[position]
 
         holder.comment.text = data.comment.message
-        holder.name.text = data.user?.name
+
+        if (data.user != null) {
+            holder.name.text = data.user.name
+
+            Picasso.get()
+                    .load(data.user.portrait.medium)
+                    .into(holder.profilePic)
+        }
     }
 
 }

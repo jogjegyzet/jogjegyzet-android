@@ -2,6 +2,7 @@ package com.gergelydaniel.jogjegyzet.ui.document
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_document.view.*
+import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
 
 private const val KEY_ID = "docId"
@@ -27,6 +29,8 @@ private const val KEY_ID = "docId"
 class DocumentController : BaseController, TitleProvider {
     @Inject
     internal lateinit var presenter : DocumentPresenter
+
+    private lateinit var adapter: CommentAdapter
 
     private val docId : String
     private val document: Document?
@@ -60,6 +64,9 @@ class DocumentController : BaseController, TitleProvider {
     override fun onAttach(view: View) {
         super.onAttach(view)
 
+        adapter = CommentAdapter()
+        view.comments.layoutManager = LinearLayoutManager(view.context)
+        view.comments.adapter = adapter
 
         val obs = if(document != null)
             presenter.getViewModel(document)
@@ -119,14 +126,14 @@ class DocumentController : BaseController, TitleProvider {
 
                 when (vm.comments) {
                     is CommentsViewModel.Loading -> {
-                        view.comments.text = "Loading..."
+                        //TODO comments are loading
+                        //view.comments.text = "Loading..."
+                        view.comments.hide()
                     }
 
                     is CommentsViewModel.Data -> {
-                        view.comments.text = if (vm.comments.comments.isEmpty())
-                            "Nincs comment"
-                        else
-                            vm.comments.comments.map { "${it.user?.name}: ${it.comment.message}" }.fold("") { acc, n -> acc + "\n" + n}
+                        view.comments.show()
+                        adapter.data = vm.comments.comments
                     }
                 }
 

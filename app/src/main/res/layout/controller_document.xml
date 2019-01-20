@@ -12,12 +12,14 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        tools:visibility="gone"/>
     
     <ProgressBar
         android:id="@+id/document_progress"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:visibility="gone"/>
     
     <LinearLayout
         android:id="@+id/document_container"
@@ -133,10 +135,10 @@
             android:layout_marginTop="16dp"
             android:text="@string/open"/>
 
-        <TextView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/comments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 </FrameLayout>

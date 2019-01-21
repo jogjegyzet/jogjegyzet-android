@@ -1,7 +1,6 @@
 package com.gergelydaniel.jogjegyzet.ui.category
 
 import android.content.Context
-import android.view.View
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
@@ -41,7 +40,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                     .toObservable()
         }
 
-        titleObservable.subscribe {titleSubject.onNext(it)}
+        val titleSub = titleObservable.subscribe {titleSubject.onNext(it)}
 
         return Observables.combineLatest(
                 catObs, docObs
@@ -56,6 +55,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnDispose{ titleSub.dispose() }
     }
 }
 

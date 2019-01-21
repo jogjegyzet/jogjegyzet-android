@@ -58,6 +58,8 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
         adapter = BrowserAdapter()
         view.recycler_view.adapter = adapter
 
+        view.empty.text = view.context.getString(R.string.emptycat)
+
         adapter.onClickListener = {
             when (it) {
                 is Either.Left -> {
@@ -113,7 +115,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
                 adapter.data = vm.categories.map { Either.Left(it) }.plus(vm.documents.map { Either.Right(it) })
                 restoreScrollState()
             }
-            is ViewModel.Empty -> { view.empty.text = view.context.getString(R.string.emptycat) }
+            is ViewModel.Empty -> { }
             is ViewModel.Error -> {
                 view.error_text.setText(
                         when (vm.error) {

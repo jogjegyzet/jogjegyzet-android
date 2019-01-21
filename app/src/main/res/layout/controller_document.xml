@@ -7,20 +7,20 @@
 
     <TextView
         android:id="@+id/document_error"
-        android:text="@string/error"
-        android:gravity="center"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/error"
         android:textAlignment="center"
         tools:visibility="gone"/>
-    
+
     <ProgressBar
         android:id="@+id/document_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:visibility="gone"/>
-    
+
     <FrameLayout
         android:id="@+id/document_container"
         android:layout_width="match_parent"
@@ -32,118 +32,118 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-        <TextView
-            style="@style/SecondaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/name"/>
-
-        <TextView
-            android:id="@+id/document_details_name"
-            style="@style/PrimaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Római jogok összes.txt"/>
-
-        <TextView
-            android:id="@+id/label_document_description"
-            style="@style/SecondaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/description"/>
-
-        <TextView
-            android:id="@+id/document_details_description"
-            style="@style/PrimaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Ez egy nagyon fasza jegyzet!"/>
-
-        <TextView
-            style="@style/SecondaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/num_downloads"/>
-
-        <TextView
-            android:id="@+id/document_details_downloads"
-            style="@style/PrimaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="1234324"/>
-
-        <TextView
-            style="@style/SecondaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ratings"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/image_thumb_up"
+            <TextView
+                style="@style/SecondaryText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:contentDescription="@string/thumpsup"
-                android:src="@drawable/ic_thumb_up"
-                android:layout_marginEnd="2dp"
+                android:text="@string/name"/>
+
+            <TextView
+                android:id="@+id/document_details_name"
+                style="@style/PrimaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Római jogok összes.txt"/>
+
+            <TextView
+                android:id="@+id/label_document_description"
+                style="@style/SecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/description"/>
+
+            <TextView
+                android:id="@+id/document_details_description"
+                style="@style/PrimaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Ez egy nagyon fasza jegyzet!"/>
+
+            <TextView
+                style="@style/SecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/num_downloads"/>
+
+            <TextView
+                android:id="@+id/document_details_downloads"
+                style="@style/PrimaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1234324"/>
+
+            <TextView
+                style="@style/SecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ratings"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/image_thumb_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="@string/thumpsup"
+                    android:src="@drawable/ic_thumb_up"/>
+
+                <TextView
+                    android:id="@+id/num_likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/image_thumb_up"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    tools:text="23"/>
+
+
+                <ImageView
+                    android:id="@+id/image_thumb_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="@string/thumpsdown"
+                    android:src="@drawable/ic_thumb_down"/>
+
+                <TextView
+                    android:id="@+id/num_dislikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toStartOf="@+id/image_thumb_down"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    tools:text="12"/>
+
+            </RelativeLayout>
+
+            <com.gergelydaniel.jogjegyzet.ui.document.RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                style="@style/SecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comments"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/comments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="4dp"/>
-
-            <TextView
-                android:id="@+id/num_likes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/image_thumb_up"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                tools:text="23"/>
-
-
-            <ImageView
-                android:id="@+id/image_thumb_down"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:contentDescription="@string/thumpsdown"
-                android:src="@drawable/ic_thumb_down"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="2dp"/>
-
-            <TextView
-                android:id="@+id/num_dislikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/image_thumb_down"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                tools:text="12"/>
-
-        </RelativeLayout>
-
-        <com.gergelydaniel.jogjegyzet.ui.document.RatingBar
-            android:id="@+id/rating_bar"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:layout_marginBottom="10dp"/>
-
-        <TextView
-            style="@style/SecondaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comments"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/comments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="4dp"/>
 
         </LinearLayout>
 

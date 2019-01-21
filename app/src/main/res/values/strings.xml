@@ -15,6 +15,8 @@
     <string name="emptycat">Ide még nem töltöttek fel dokumentumot és nem alakítottak ki kategóriát.</string>
     <string name="nointernet">Hálózati hiba! Ellenőrizd az internetkapcsolatot</string>
     <string name="cat_error">Hiba a kategória megjelenítésekor</string>
+    <string name="search_error">Hiba a kereséskor</string>
     <string name="profile_pic">Profilkép</string>
     <string name="no_comment">Nincs hozzászólás</string>
+    <string name="retry">Újratöltés</string>
 </resources>

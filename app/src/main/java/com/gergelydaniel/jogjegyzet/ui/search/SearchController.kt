@@ -1,5 +1,6 @@
 package com.gergelydaniel.jogjegyzet.ui.search
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -18,6 +19,7 @@ import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.vis
+import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
@@ -76,6 +78,7 @@ class SearchController : BaseController() {
         query = savedInstanceState.getString(KEY_QUERY)
     }
 
+    @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
 
@@ -107,7 +110,16 @@ class SearchController : BaseController() {
             }
         }
 
+        RxView.clicks(view.error_retry)
+                .compose(bindToLifecycle())
+                .subscribe { presenter.retry() }
+
         _query?.let (this::subscribe)
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+        adapter.onClickListener = null
     }
 
     private fun render(vm: ViewModel) {
@@ -136,7 +148,7 @@ class SearchController : BaseController() {
                 view.error_text.setText(
                         when (vm.error) {
                             is NoInternetException -> R.string.nointernet
-                            else -> R.string.cat_error
+                            else -> R.string.search_error
                         }
                 )
             }

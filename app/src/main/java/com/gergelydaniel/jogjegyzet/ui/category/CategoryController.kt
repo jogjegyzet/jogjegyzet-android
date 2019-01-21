@@ -20,6 +20,7 @@ import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
 import com.gergelydaniel.jogjegyzet.util.vis
+import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_main.view.*
@@ -79,6 +80,10 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
             }
         }
 
+        RxView.clicks(view.error_retry)
+                .compose(bindToLifecycle())
+                .subscribe { presenter.retry() }
+
         presenter.getViewModel(catId)
                 .compose(bindToLifecycle())
                 .subscribe(::render)
@@ -86,6 +91,12 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
         presenter.title
                 .compose(bindToLifecycle())
                 .subscribe { titleSubject.onNext(it) }
+    }
+
+    override fun onDetach(view: View) {
+        super.onDetach(view)
+
+        adapter.onClickListener = null
     }
 
     override fun onSaveViewState(view: View, outState: Bundle) {

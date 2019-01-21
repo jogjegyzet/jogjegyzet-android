@@ -11,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -18,8 +19,10 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                                             private val documentRepository: DocumentRepository,
                                             private val context: Context) {
     private val titleSubject: BehaviorSubject<String> = BehaviorSubject.create()
+    private val retrySubject = PublishSubject.create<Any>()
 
     val title: Observable<String> get() = titleSubject
+
 
     fun getViewModel(catId: String?): Observable<ViewModel> {
         val catObs: Observable<List<Category>>
@@ -57,7 +60,11 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnDispose { titleSub.dispose() }
-                .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
+                .repeatWhen { it.delay(10, TimeUnit.SECONDS).mergeWith(retrySubject) }
+    }
+
+    fun retry() {
+        retrySubject.onNext(Unit)
     }
 }
 

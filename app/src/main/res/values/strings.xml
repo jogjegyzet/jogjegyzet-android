@@ -16,4 +16,5 @@
     <string name="nointernet">Hálózati hiba! Ellenőrizd az internetkapcsolatot</string>
     <string name="cat_error">Hiba a kategória megjelenítésekor</string>
     <string name="profile_pic">Profilkép</string>
+    <string name="no_comment">Nincs hozzászólás</string>
 </resources>

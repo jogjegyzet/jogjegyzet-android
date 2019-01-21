@@ -126,13 +126,18 @@ class DocumentController : BaseController, TitleProvider {
 
                 when (vm.comments) {
                     is CommentsViewModel.Loading -> {
-                        //TODO comments are loading
-                        //view.comments.text = "Loading..."
+                        view.comments_empty.hide()
                         view.comments.hide()
                     }
 
                     is CommentsViewModel.Data -> {
-                        view.comments.show()
+                        if (vm.comments.comments.isEmpty()) {
+                            view.comments_empty.show()
+                            view.comments.hide()
+                        } else {
+                            view.comments_empty.hide()
+                            view.comments.show()
+                        }
                         adapter.data = vm.comments.comments
                     }
                 }

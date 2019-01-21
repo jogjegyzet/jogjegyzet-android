@@ -6,13 +6,13 @@ import com.gergelydaniel.jogjegyzet.domain.User
 import com.gergelydaniel.jogjegyzet.service.CommentRepository
 import com.gergelydaniel.jogjegyzet.service.DocumentRepository
 import com.gergelydaniel.jogjegyzet.service.UserRepository
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class DocumentPresenter @Inject constructor(
@@ -64,6 +64,7 @@ class DocumentPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWith(initialVm)
                 .onErrorReturn { ViewModel.Error() }
+                .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
 
         return obs
     }

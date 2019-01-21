@@ -10,12 +10,14 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
+import com.gergelydaniel.jogjegyzet.domain.NoInternetException
 import com.gergelydaniel.jogjegyzet.domain.SearchResult
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
+import com.gergelydaniel.jogjegyzet.util.vis
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
@@ -110,18 +112,16 @@ class SearchController : BaseController() {
 
     private fun render(vm: ViewModel) {
         val view = view!!
+
+        view.category_progress.vis = vm is ViewModel.Loading
+        view.recycler_view.vis = vm is ViewModel.Data
+        view.error.vis = vm is ViewModel.Error
+        view.empty.vis = vm is ViewModel.Empty
+
         when(vm) {
-            is ViewModel.Loading -> {
-                view.recycler_view.visibility = View.GONE
-                view.category_progress.visibility = View.VISIBLE
-                view.text.visibility = View.GONE
-            }
+            is ViewModel.Loading -> { }
+
             is ViewModel.Data -> {
-
-                view.recycler_view.visibility = View.VISIBLE
-                view.category_progress.visibility = View.GONE
-                view.text.visibility = View.GONE
-
                 adapter.data = vm.data.map {
                     when(it) {
                         is SearchResult.DocumentResult -> Either.Right(it.document)
@@ -130,11 +130,15 @@ class SearchController : BaseController() {
                 }
             }
             is ViewModel.Empty -> {
-                view.recycler_view.visibility = View.GONE
-                view.category_progress.visibility = View.GONE
-                view.text.visibility = View.VISIBLE
-
-                view.text.text = view.context.getString(R.string.noresult, _query)
+                view.empty.text = view.context.getString(R.string.noresult, _query)
+            }
+            is ViewModel.Error -> {
+                view.error_text.setText(
+                        when (vm.error) {
+                            is NoInternetException -> R.string.nointernet
+                            else -> R.string.cat_error
+                        }
+                )
             }
         }
     }

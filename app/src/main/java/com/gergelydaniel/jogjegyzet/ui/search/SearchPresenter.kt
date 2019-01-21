@@ -21,6 +21,7 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient) {
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn { ViewModel.Error(it) }
     }
 }
 
@@ -28,4 +29,5 @@ sealed class ViewModel {
     class Loading : ViewModel()
     class Data(val data: List<SearchResult>) : ViewModel()
     class Empty : ViewModel()
+    class Error(val error: Throwable) : ViewModel()
 }

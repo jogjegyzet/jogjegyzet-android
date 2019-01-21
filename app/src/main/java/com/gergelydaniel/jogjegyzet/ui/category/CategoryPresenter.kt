@@ -25,21 +25,23 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
         val catObs: Observable<List<Category>>
         val docObs: Observable<List<Document>>
 
-        if (catId == null) {
+        val titleObservable =  if (catId == null) {
             catObs = categoryRepository.getRootCategories()
             docObs = Observable.just(listOf())
 
-            titleSubject.onNext(context.getString(R.string.app_name))
+            Observable.just(context.getString(R.string.app_name))
         } else {
             catObs = categoryRepository.getSubCategories(catId)
             docObs = documentRepository.getDocumentsInCategory(catId)
 
             categoryRepository.getCategory(catId)
+                    .map { it.name }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {titleSubject.onNext(it.name)}
+                    .toObservable()
         }
 
+        titleObservable.subscribe {titleSubject.onNext(it)}
 
         return Observables.combineLatest(
                 catObs, docObs

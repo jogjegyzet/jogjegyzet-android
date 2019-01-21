@@ -11,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CategoryPresenter @Inject constructor(private val categoryRepository: CategoryRepository,
@@ -24,7 +25,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
         val catObs: Observable<List<Category>>
         val docObs: Observable<List<Document>>
 
-        val titleObservable =  if (catId == null) {
+        val titleObservable = if (catId == null) {
             catObs = categoryRepository.getRootCategories()
             docObs = Observable.just(listOf())
 
@@ -40,7 +41,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                     .toObservable()
         }
 
-        val titleSub = titleObservable.subscribe {titleSubject.onNext(it)}
+        val titleSub = titleObservable.subscribe { titleSubject.onNext(it) }
 
         return Observables.combineLatest(
                 catObs, docObs
@@ -55,7 +56,8 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                 .startWith(ViewModel.Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnDispose{ titleSub.dispose() }
+                .doOnDispose { titleSub.dispose() }
+                .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
     }
 }
 

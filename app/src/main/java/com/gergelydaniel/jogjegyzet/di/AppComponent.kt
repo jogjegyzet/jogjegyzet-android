@@ -23,7 +23,8 @@ import javax.inject.Singleton
     DocumentControllerModule::class,
     SearchControllerModule::class,
     ConfigModule::class,
-    RetrofitModule::class])
+    RetrofitModule::class,
+    DbModule::class])
 interface AppComponent {
 
     @Component.Builder

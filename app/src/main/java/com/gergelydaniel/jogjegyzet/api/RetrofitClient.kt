@@ -11,21 +11,21 @@ interface RetrofitClient {
     @GET("categories")
     fun getCategories(): Single<Response<List<Category>>>
 
-    @GET("categories/{id}")
-    fun getCategory(@Path("id") id: String): Single<Response<Category?>>
+    @GET("categories/{docId}")
+    fun getCategory(@Path("docId") id: String): Single<Response<Category?>>
 
-    @GET("categories/{id}/documents")
-    fun getDocumentsInCategory(@Path("id") id: String): Single<Response<List<Document>>>
+    @GET("categories/{docId}/documents")
+    fun getDocumentsInCategory(@Path("docId") id: String): Single<Response<List<Document>>>
 
-    @GET("documents/{id}")
-    fun getDocument(@Path("id") id: String): Single<Response<Document>>
+    @GET("documents/{docId}")
+    fun getDocument(@Path("docId") id: String): Single<Response<Document>>
 
     @GET("search")
     fun search(@Query("q") query: String): Single<Response<List<SearchResult>>>
 
-    @GET("users/{id}")
-    fun getUser(@Path("id") id: String): Single<Response<User>>
+    @GET("users/{docId}")
+    fun getUser(@Path("docId") id: String): Single<Response<User>>
 
-    @GET("documents/{id}/comments")
-    fun getCommentsForDocument(@Path("id") documentId: String) : Single<Response<List<Comment>>>
+    @GET("documents/{docId}/comments")
+    fun getCommentsForDocument(@Path("docId") documentId: String) : Single<Response<List<Comment>>>
 }

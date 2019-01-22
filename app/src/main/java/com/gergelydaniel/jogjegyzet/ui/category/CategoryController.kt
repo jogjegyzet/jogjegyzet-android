@@ -12,6 +12,7 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.NoInternetException
+import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
@@ -61,24 +62,7 @@ class CategoryController(val catId: String? = null) : BaseController(), TitlePro
 
         view.empty.text = view.context.getString(R.string.emptycat)
 
-        adapter.onClickListener = {
-            when (it) {
-                is Either.Left -> {
-                    router.pushController(
-                            RouterTransaction.with(CategoryController(it.value.id))
-                                    .popChangeHandler(HorizontalChangeHandler())
-                                    .pushChangeHandler(HorizontalChangeHandler())
-                    )
-                }
-                is Either.Right -> {
-                    router.pushController(
-                            RouterTransaction.with(DocumentController(it.value))
-                                    .popChangeHandler(HorizontalChangeHandler())
-                                    .pushChangeHandler(HorizontalChangeHandler())
-                    )
-                }
-            }
-        }
+        adapter.onClickListener = AdapterClickListener(router)::onAdapterClick
 
         RxView.clicks(view.error_retry)
                 .compose(bindToLifecycle())

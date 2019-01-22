@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
+import com.gergelydaniel.jogjegyzet.ui.home.HomeController
 import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.Disposable
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         router = Conductor.attachRouter(this, outlet, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(CategoryController()))
+            router.setRoot(RouterTransaction.with(HomeController()))
         }
         router.addChangeListener(object : ControllerChangeHandler.ControllerChangeListener {
             override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     private fun setActionBarButtons() {
         val current = if (router.backstack.isEmpty()) null else router.backstack.last().controller()
 
-        val isHome = current is CategoryController && current.catId == null
+        val isHome = current is HomeController
         supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
         searchItem?.isVisible = isHome
     }

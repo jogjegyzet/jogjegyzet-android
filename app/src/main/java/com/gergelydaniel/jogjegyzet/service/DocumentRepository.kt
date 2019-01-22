@@ -7,6 +7,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +21,7 @@ class DocumentRepository @Inject constructor(private val apiClient: ApiClient,
                     .doOnSuccess { it.forEach { cache.put(it.id, it) } }
                     .flatMapObservable {
                         favoriteRepository.updateIfExists(it)
+                                .subscribeOn(Schedulers.io())
                                 .andThen(Observable.just(it))
                     }
 
@@ -33,6 +35,7 @@ class DocumentRepository @Inject constructor(private val apiClient: ApiClient,
                             apiClient.getDocument(id)
                                     .flatMapObservable {
                                         favoriteRepository.updateIfExists(it)
+                                                .subscribeOn(Schedulers.io())
                                                 .andThen(Observable.just(it))
                                     }
                     )

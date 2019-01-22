@@ -13,6 +13,7 @@ import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.NoInternetException
 import com.gergelydaniel.jogjegyzet.domain.SearchResult
+import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
@@ -90,25 +91,7 @@ class SearchController : BaseController() {
         adapter = BrowserAdapter()
         view.recycler_view.adapter = adapter
 
-        adapter.onClickListener = {
-            router.popController(this)
-            when(it) {
-                is Either.Left -> {
-                    router.pushController(
-                            RouterTransaction.with(CategoryController(it.value.id))
-                                    .popChangeHandler(HorizontalChangeHandler())
-                                    .pushChangeHandler(HorizontalChangeHandler())
-                    )
-                }
-                is Either.Right -> {
-                    router.pushController(
-                            RouterTransaction.with(DocumentController(it.value))
-                                    .popChangeHandler(HorizontalChangeHandler())
-                                    .pushChangeHandler(HorizontalChangeHandler())
-                    )
-                }
-            }
-        }
+        adapter.onClickListener = AdapterClickListener(router)::onAdapterClick
 
         RxView.clicks(view.error_retry)
                 .compose(bindToLifecycle())

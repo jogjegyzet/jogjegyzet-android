@@ -4,6 +4,7 @@ import com.christianbahl.conductor.ConductorInjectionModule
 import com.gergelydaniel.jogjegyzet.App
 import com.gergelydaniel.jogjegyzet.di.categorycontroller.CategoryControllerModule
 import com.gergelydaniel.jogjegyzet.di.documentcontroller.DocumentControllerModule
+import com.gergelydaniel.jogjegyzet.di.homecontroller.HomeControllerModule
 import com.gergelydaniel.jogjegyzet.di.mainactivity.MainActivityModule
 import com.gergelydaniel.jogjegyzet.di.searchcontroller.SearchControllerModule
 import dagger.BindsInstance
@@ -22,6 +23,7 @@ import javax.inject.Singleton
     CategoryControllerModule::class,
     DocumentControllerModule::class,
     SearchControllerModule::class,
+    HomeControllerModule::class,
     ConfigModule::class,
     RetrofitModule::class,
     DbModule::class])

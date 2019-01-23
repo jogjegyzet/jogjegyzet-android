@@ -1,5 +1,6 @@
 package com.gergelydaniel.jogjegyzet.service
 
+import android.util.Log
 import android.util.LruCache
 import com.gergelydaniel.jogjegyzet.api.ApiClient
 import com.gergelydaniel.jogjegyzet.domain.Document
@@ -28,23 +29,30 @@ class DocumentRepository @Inject constructor(private val apiClient: ApiClient,
 
     fun getDocument(id: String): Observable<Document> {
         return Observable.defer {
-            var obs =
-                    Observable.concat(
-                            favoriteRepository.getById(id).toObservable(),
+            val networkObs = apiClient.getDocument(id)
+                    .flatMapObservable {
+                        favoriteRepository.updateIfExists(it)
+                                .subscribeOn(Schedulers.io())
+                                .andThen(Observable.just(it))
+                    }
 
-                            apiClient.getDocument(id)
-                                    .flatMapObservable {
-                                        favoriteRepository.updateIfExists(it)
-                                                .subscribeOn(Schedulers.io())
-                                                .andThen(Observable.just(it))
-                                    }
-                    )
+            var obs =
+                    favoriteRepository.getById(id)
+                            .toObservable()
+                            .flatMap {
+                                networkObs
+                                        .startWith(it)
+                                        .onErrorResumeNext(Observable.empty<Document>())
+                            }
+                            .switchIfEmpty(networkObs)
+
 
             val cached: Document? = cache.get(id)
             if (cached != null) {
                 obs = obs.startWith(cached)
             }
             obs
+                    .doOnError { Log.e("getDoc", "ERROROROR", it) }
         }
     }
 }

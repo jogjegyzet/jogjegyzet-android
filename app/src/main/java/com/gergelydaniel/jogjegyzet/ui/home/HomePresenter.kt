@@ -16,7 +16,7 @@ class HomePresenter @Inject constructor(private val categoryRepository: Category
     fun getViewModel(): Observable<ViewModel> {
         return Observables.combineLatest(
                 categoryRepository.getRootCategories()
-                        .map { CategoriesViewModel.Data(it) as CategoriesViewModel }
+                        .map { CategoriesViewModel.Data(it.sortedBy { it.name }) as CategoriesViewModel }
                         .startWith(CategoriesViewModel.Loading())
                         .onErrorReturn { CategoriesViewModel.Error(it) }
                         .subscribeOn(Schedulers.io())

@@ -1,11 +1,14 @@
 package com.gergelydaniel.jogjegyzet.ui.document
 
+import android.util.Log
 import com.gergelydaniel.jogjegyzet.domain.Comment
 import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.domain.User
 import com.gergelydaniel.jogjegyzet.service.CommentRepository
 import com.gergelydaniel.jogjegyzet.service.DocumentRepository
+import com.gergelydaniel.jogjegyzet.service.FavoriteRepository
 import com.gergelydaniel.jogjegyzet.service.UserRepository
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +21,9 @@ import javax.inject.Inject
 class DocumentPresenter @Inject constructor(
         private val documentRepository: DocumentRepository,
         private val commentRepository: CommentRepository,
-        private val userRepository: UserRepository) {
+        private val userRepository: UserRepository,
+        private val favoriteRepository: FavoriteRepository) {
+
     private lateinit var docSubject: BehaviorSubject<Document>
 
     fun getViewModel(initial: Document): Observable<ViewModel> {
@@ -59,6 +64,7 @@ class DocumentPresenter @Inject constructor(
                         }
                         .map { CommentsViewModel.Data(it) as CommentsViewModel }
                         .startWith(CommentsViewModel.Loading())
+                        .onErrorReturn { CommentsViewModel.Error(it) }
 
         ) { doc, comments -> ViewModel.Data(doc, comments) as ViewModel }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -67,6 +73,14 @@ class DocumentPresenter @Inject constructor(
                 .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
 
         return obs
+    }
+
+    fun addToFavorites(): Completable {
+        return docSubject
+                .filter { it != null }
+                .take(1)
+                .flatMapCompletable { favoriteRepository.insert(it).subscribeOn(Schedulers.io()) }
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     val title: Observable<String> get() =
@@ -83,6 +97,7 @@ sealed class ViewModel {
 sealed class CommentsViewModel {
     class Loading: CommentsViewModel()
     class Data(val comments: List<CommentViewModel>) : CommentsViewModel()
+    class Error(val error: Throwable): CommentsViewModel()
 }
 
 class CommentViewModel(val comment: Comment, val user: User?)

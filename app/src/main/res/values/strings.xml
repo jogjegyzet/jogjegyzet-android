@@ -19,4 +19,5 @@
     <string name="profile_pic">Profilkép</string>
     <string name="no_comment">Nincs hozzászólás</string>
     <string name="retry">Újratöltés</string>
+    <string name="add_to_favorites">Hozzáadás a kedvencekhez</string>
 </resources>

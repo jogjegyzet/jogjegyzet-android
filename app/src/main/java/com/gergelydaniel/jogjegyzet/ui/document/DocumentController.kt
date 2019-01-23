@@ -21,7 +21,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_document.view.*
-import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
 
 private const val KEY_ID = "docId"
@@ -82,6 +81,17 @@ class DocumentController : BaseController, TitleProvider {
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(bindToLifecycle())
                 .subscribe { titleSubject.onNext(it) }
+
+        view.button_favorite.setOnClickListener {
+            presenter.addToFavorites()
+                    .toObservable<String>()
+                    .compose(bindToLifecycle())
+                    .subscribe()
+        }
+    }
+
+    override fun onDetach(view: View) {
+        view.button_favorite.setOnClickListener(null)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -139,6 +149,13 @@ class DocumentController : BaseController, TitleProvider {
                             view.comments.show()
                         }
                         adapter.data = vm.comments.comments
+                    }
+
+                    is CommentsViewModel.Error -> {
+                        // TODO error message about comments
+
+                        view.comments_empty.hide()
+                        view.comments.hide()
                     }
                 }
 

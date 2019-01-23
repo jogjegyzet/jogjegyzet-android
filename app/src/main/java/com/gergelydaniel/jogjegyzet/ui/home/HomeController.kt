@@ -42,6 +42,10 @@ class HomeController : BaseController() {
 
         adapter.onClickListener = AdapterClickListener(router)::onAdapterClick
 
+        view.error_retry.setOnClickListener {
+            presenter.retry()
+        }
+
         presenter.getViewModel()
                 .compose(bindToLifecycle())
                 .subscribe(::render)
@@ -80,6 +84,7 @@ class HomeController : BaseController() {
         super.onDetach(view)
 
         adapter.onClickListener = null
+        view.error_retry.setOnClickListener(null)
     }
 
 }

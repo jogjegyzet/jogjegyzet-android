@@ -8,11 +8,14 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomePresenter @Inject constructor(private val categoryRepository: CategoryRepository,
                                         private val favoriteRepository: FavoriteRepository) {
+
+    private val retrySubject = PublishSubject.create<Any>()
 
     fun getViewModel(): Observable<ViewModel> {
         return Observables.combineLatest(
@@ -21,7 +24,7 @@ class HomePresenter @Inject constructor(private val categoryRepository: Category
                         .startWith(CategoriesViewModel.Loading())
                         .flatMap { Observable.concat(Observable.just(it), Observable.never<CategoriesViewModel>()) }
                         .onErrorReturn { CategoriesViewModel.Error(it) }
-                        .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
+                        .repeatWhen { it.delay(10, TimeUnit.SECONDS).mergeWith(retrySubject) }
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()),
 
@@ -31,6 +34,9 @@ class HomePresenter @Inject constructor(private val categoryRepository: Category
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun retry() {
+        retrySubject.onNext(Unit)
+    }
 }
 
 class ViewModel(val categories: CategoriesViewModel, val favorites: List<Document>)

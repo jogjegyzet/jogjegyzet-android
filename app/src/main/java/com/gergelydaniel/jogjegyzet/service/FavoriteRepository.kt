@@ -7,7 +7,6 @@ import com.gergelydaniel.jogjegyzet.persistence.favorite.mapToEntity
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 import javax.inject.Singleton
 

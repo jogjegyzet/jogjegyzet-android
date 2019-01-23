@@ -20,7 +20,6 @@ class HomeController : BaseController() {
     @Inject
     lateinit var presenter: HomePresenter
 
-    private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: BrowserAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -35,10 +34,8 @@ class HomeController : BaseController() {
     override fun onAttach(view: View) {
         super.onAttach(view)
 
-        linearLayoutManager = LinearLayoutManager(view.context)
-        view.recycler_view.layoutManager = linearLayoutManager
         adapter = BrowserAdapter()
-        view.recycler_view.adapter = adapter
+        view.list_categories.adapter = adapter
 
         adapter.onClickListener = AdapterClickListener(router)::onAdapterClick
 
@@ -55,7 +52,7 @@ class HomeController : BaseController() {
         val view = view!!
 
         view.category_progress.vis = vm.categories is CategoriesViewModel.Loading
-        view.recycler_view.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isNotEmpty()
+        view.list_categories.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isNotEmpty()
         view.error.vis = vm.categories is CategoriesViewModel.Error
         view.empty.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isEmpty()
 

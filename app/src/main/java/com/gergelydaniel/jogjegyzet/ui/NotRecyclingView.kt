@@ -31,6 +31,8 @@ class NotRecyclingView
 
         val newItems = mutableListOf<RecyclerView.ViewHolder>()
 
+        this.removeAllViewsInLayout()
+
         for (i in 0 until count) {
             val type = adapter.getItemViewType(i)
 
@@ -43,17 +45,14 @@ class NotRecyclingView
 
             //TODO better solution
             (adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>).onBindViewHolder(item, i)
-
             newItems.add(item)
-
-            this.removeAllViewsInLayout()
-            newItems.forEach { addView(it.itemView) }
-
-            items = newItems
-
-            invalidate()
-            requestLayout()
         }
+
+        newItems.forEachIndexed { index, viewHolder ->  addView(viewHolder.itemView, index) }
+        items = newItems
+
+        invalidate()
+        requestLayout()
     }
 
 }

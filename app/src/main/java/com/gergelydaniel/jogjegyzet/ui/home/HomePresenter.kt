@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomePresenter @Inject constructor(private val categoryRepository: CategoryRepository,
@@ -18,7 +19,9 @@ class HomePresenter @Inject constructor(private val categoryRepository: Category
                 categoryRepository.getRootCategories()
                         .map { CategoriesViewModel.Data(it.sortedBy { it.name }) as CategoriesViewModel }
                         .startWith(CategoriesViewModel.Loading())
+                        .flatMap { Observable.concat(Observable.just(it), Observable.never<CategoriesViewModel>()) }
                         .onErrorReturn { CategoriesViewModel.Error(it) }
+                        .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()),
 

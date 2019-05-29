@@ -1,13 +1,8 @@
 package com.gergelydaniel.jogjegyzet.ui.document
 
-import android.util.Log
 import com.gergelydaniel.jogjegyzet.domain.Comment
-import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.domain.User
-import com.gergelydaniel.jogjegyzet.service.CommentRepository
-import com.gergelydaniel.jogjegyzet.service.DocumentRepository
-import com.gergelydaniel.jogjegyzet.service.FavoriteRepository
-import com.gergelydaniel.jogjegyzet.service.UserRepository
+import com.gergelydaniel.jogjegyzet.service.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -15,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -24,19 +20,20 @@ class DocumentPresenter @Inject constructor(
         private val userRepository: UserRepository,
         private val favoriteRepository: FavoriteRepository) {
 
-    private lateinit var docSubject: BehaviorSubject<Document>
+    private lateinit var docSubject: BehaviorSubject<DocumentData>
+    private val refreshSubject = PublishSubject.create<Any>()
 
-    fun getViewModel(initial: Document): Observable<ViewModel> {
+    fun getViewModel(initial: DocumentData): Observable<ViewModel> {
         docSubject = BehaviorSubject.createDefault(initial)
 
-        return getViewModel(initial.id, initial)
+        return getViewModel(initial.document.id, initial)
     }
 
     fun getViewModel(docId: String): Observable<ViewModel> {
         return getViewModel(docId, null)
     }
 
-    private fun getViewModel(id: String, initial: Document?) : Observable<ViewModel> {
+    private fun getViewModel(id: String, initial: DocumentData?) : Observable<ViewModel> {
         docSubject = BehaviorSubject.create()
 
         val initialVm = if (initial == null)
@@ -47,9 +44,11 @@ class DocumentPresenter @Inject constructor(
         val obs = Observables.combineLatest(
                 documentRepository.getDocument(id)
                         .subscribeOn(Schedulers.io())
+                        .repeatWhen { refreshSubject }
                         .doOnNext(docSubject::onNext),
 
                 commentRepository.getCommentsForDocument(id)
+                        .repeatWhen { refreshSubject }
                         .subscribeOn(Schedulers.io())
                         .flatMap { comments ->
                             val observables = comments.map { comment -> comment.user }
@@ -70,7 +69,7 @@ class DocumentPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWith(initialVm)
                 .onErrorReturn { ViewModel.Error() }
-                .repeatWhen { it.delay(10, TimeUnit.SECONDS) }
+                .repeatWhen { it.delay(10, TimeUnit.SECONDS).mergeWith(refreshSubject) }
 
         return obs
     }
@@ -79,18 +78,19 @@ class DocumentPresenter @Inject constructor(
         return docSubject
                 .filter { it != null }
                 .take(1)
-                .flatMapCompletable { favoriteRepository.insert(it).subscribeOn(Schedulers.io()) }
+                .flatMapCompletable { favoriteRepository.insert(it.document).subscribeOn(Schedulers.io()) }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete { refreshSubject.onNext(Any()) }
     }
 
     val title: Observable<String> get() =
-            docSubject.map { it.name }
+            docSubject.map { it.document.name }
 
 }
 
 sealed class ViewModel {
     class Loading : ViewModel()
-    class Data(val document: Document, val comments: CommentsViewModel) : ViewModel()
+    class Data(val document: DocumentData, val comments: CommentsViewModel) : ViewModel()
     class Error : ViewModel()
 }
 

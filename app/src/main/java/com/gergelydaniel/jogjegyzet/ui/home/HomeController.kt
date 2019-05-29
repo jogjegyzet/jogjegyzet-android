@@ -9,6 +9,7 @@ import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.domain.NoInternetException
+import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
@@ -84,7 +85,7 @@ class HomeController : BaseController() {
         //if (favs.isEmpty()) favs = "Nincs kedvenc"
         //view.text_favorites.text = favs
 
-        favoritesAdapter.data = vm.favorites.map { Either.Right(it) }
+        favoritesAdapter.data = vm.favorites.map { Either.Right(DocumentData(it, true)) }
     }
 
     override fun onDetach(view: View) {

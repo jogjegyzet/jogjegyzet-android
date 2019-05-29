@@ -5,6 +5,7 @@ import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.service.CategoryRepository
+import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.service.DocumentRepository
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,7 +27,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
 
     fun getViewModel(catId: String?): Observable<ViewModel> {
         val catObs: Observable<List<Category>>
-        val docObs: Observable<List<Document>>
+        val docObs: Observable<List<DocumentData>>
 
         val titleObservable = if (catId == null) {
             catObs = categoryRepository.getRootCategories()
@@ -50,7 +51,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
                 catObs, docObs
         ) { cats, docs ->
             if (cats.size + docs.size > 0) {
-                ViewModel.NonEmpty(cats.sortedBy { it.name }, docs.sortedBy { it.name })
+                ViewModel.NonEmpty(cats.sortedBy { it.name }, docs.sortedBy { it.document.name })
             } else {
                 ViewModel.Empty()
             }
@@ -70,7 +71,7 @@ class CategoryPresenter @Inject constructor(private val categoryRepository: Cate
 
 sealed class ViewModel {
     class Loading : ViewModel()
-    class NonEmpty(val categories: List<Category>, val documents: List<Document>) : ViewModel()
+    class NonEmpty(val categories: List<Category>, val documents: List<DocumentData>) : ViewModel()
     class Error(val error: Throwable) : ViewModel()
     class Empty : ViewModel()
 }

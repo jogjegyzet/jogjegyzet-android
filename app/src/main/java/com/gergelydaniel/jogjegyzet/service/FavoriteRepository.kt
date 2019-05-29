@@ -15,15 +15,17 @@ class FavoriteRepository @Inject constructor(private val db: JogjegyzetDatabase)
     fun getFavorites(): Single<List<Document>> =
             Single.fromCallable { db.favoriteDao().getAll().map(::mapFromEntity) }
 
+    fun containsItems(ids: List<String>): Single<List<Boolean>> = Single.fromCallable { db.favoriteDao().containsDocs(ids) }
+
     fun getById(id: String): Maybe<Document> =
             Maybe.fromCallable { db.favoriteDao().getById(id)?.let(::mapFromEntity) }
 
     fun insert(document: Document): Completable =
             Completable.fromAction { db.favoriteDao().insert(document.let(::mapToEntity)) }
 
-    fun updateIfExists(document: Document): Completable =
-            Completable.fromAction { db.favoriteDao().updateIfContains(document.let(::mapToEntity)) }
+    fun updateIfExists(document: Document): Single<Boolean> =
+            Single.fromCallable { db.favoriteDao().updateIfContains(document.let(::mapToEntity)) }
 
-    fun updateIfExists(documents: Collection<Document>): Completable =
-            Completable.fromAction { db.favoriteDao().updateAllIfContains(documents.map(::mapToEntity)) }
+    fun updateIfExists(documents: Collection<Document>): Single<List<Boolean>> =
+            Single.fromCallable { db.favoriteDao().updateAllIfContains(documents.map(::mapToEntity)) }
 }

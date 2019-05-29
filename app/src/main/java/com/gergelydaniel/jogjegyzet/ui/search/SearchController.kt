@@ -119,8 +119,8 @@ class SearchController : BaseController() {
             is ViewModel.Data -> {
                 adapter.data = vm.data.map {
                     when(it) {
-                        is SearchResult.DocumentResult -> Either.Right(it.document)
-                        is SearchResult.CategoryResult -> Either.Left(it.category)
+                        is SearchResultViewModel.DocumentResult -> Either.Right(it.document)
+                        is SearchResultViewModel.CategoryResult -> Either.Left(it.category)
                     }
                 }
             }

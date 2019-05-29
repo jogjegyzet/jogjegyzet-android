@@ -11,6 +11,7 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Document
+import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.reader.ReaderController
@@ -32,15 +33,15 @@ class DocumentController : BaseController, TitleProvider {
     private lateinit var adapter: CommentAdapter
 
     private val docId : String
-    private val document: Document?
+    private val document: DocumentData?
 
     constructor(docId: String) {
         this.docId = docId
         this.document = null
     }
 
-    constructor(document: Document) {
-        this.docId = document.id
+    constructor(document: DocumentData) {
+        this.docId = document.document.id
         this.document = document
     }
 
@@ -119,20 +120,26 @@ class DocumentController : BaseController, TitleProvider {
 
                 val document = vm.document
 
-                view.document_details_name.text = document.name
-                if(document.desc.isNullOrEmpty()) {
+                view.document_details_name.text = document.document.name
+                if(document.document.desc.isNullOrEmpty()) {
                     view.label_document_description.hide()
                     view.document_details_description.hide()
                 } else {
                     view.label_document_description.show()
                     view.document_details_description.show()
-                    view.document_details_description.text = document.desc
+                    view.document_details_description.text = document.document.desc
                 }
-                view.document_details_downloads.text = document.downloads.toString()
+                view.document_details_downloads.text = document.document.downloads.toString()
 
-                view.num_likes.text = document.posRatings.toString()
-                view.num_dislikes.text = document.negRatings.toString()
-                view.rating_bar.setData(document.posRatings, document.negRatings)
+                view.num_likes.text = document.document.posRatings.toString()
+                view.num_dislikes.text = document.document.negRatings.toString()
+                view.rating_bar.setData(document.document.posRatings, document.document.negRatings)
+
+                if (vm.document.isInFavorites) {
+                    view.button_favorite.setBackgroundResource(R.drawable.ic_star_border)
+                } else {
+                    view.button_favorite.setBackgroundResource(R.drawable.ic_star)
+                }
 
                 when (vm.comments) {
                     is CommentsViewModel.Loading -> {
@@ -163,7 +170,7 @@ class DocumentController : BaseController, TitleProvider {
                         .compose(bindToLifecycle())
                         .subscribe {
                             router.pushController(
-                                    RouterTransaction.with(ReaderController(document.fileUrl, document.name))
+                                    RouterTransaction.with(ReaderController(document.document.fileUrl, document.document.name))
                                             .popChangeHandler(HorizontalChangeHandler())
                                             .pushChangeHandler(HorizontalChangeHandler())
                             )

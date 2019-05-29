@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.Category
 import com.gergelydaniel.jogjegyzet.domain.Document
+import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.util.Either
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.row_category.view.*
@@ -25,9 +26,9 @@ private const val TYPE_CATEGORY = 1
 private const val TYPE_DOCUMENT = 2
 
 class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
-    var onClickListener : ((Either<Category, Document>) -> Unit)? = null
+    var onClickListener : ((Either<Category, DocumentData>) -> Unit)? = null
 
-    var data: List<Either<Category, Document>> = listOf()
+    var data: List<Either<Category, DocumentData>> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -66,7 +67,7 @@ class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
             }
             is Either.Right -> {
                 holder as DocumentViewHolder
-                holder.name.text = data.value.name
+                holder.name.text = data.value.document.name
             }
         }
     }

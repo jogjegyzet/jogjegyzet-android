@@ -13,17 +13,30 @@ abstract class FavouriteDAO {
     @Query("SELECT * FROM favorite WHERE doc_id = :id")
     abstract fun getById(id: String): FavoriteEntity?
 
-    @Transaction
-    open fun updateIfContains(entity: FavoriteEntity) {
-        val prev = getById(entity.docId) ?: return
+    fun containsDocs(ids: List<String>) : List<Boolean> {
+        val current = getAll().map { it.docId }
 
-        insert(entity)
+        return ids.map { current.contains(it) }
     }
 
     @Transaction
-    open fun updateAllIfContains(entities: Collection<FavoriteEntity>) {
+    open fun updateIfContains(entity: FavoriteEntity) : Boolean {
+        val prev = getById(entity.docId) ?: return false
+
+        insert(entity)
+
+        return true
+    }
+
+    @Transaction
+    open fun updateAllIfContains(entities: Collection<FavoriteEntity>): List<Boolean> {
         val current = getAll().map { it.docId }
 
-        entities.filter { current.contains(it.docId) }.forEach(::insert)
+        return entities.map {
+            if (current.contains(it.docId) ) {
+                insert(it)
+                true
+            } else false
+        }
     }
 }

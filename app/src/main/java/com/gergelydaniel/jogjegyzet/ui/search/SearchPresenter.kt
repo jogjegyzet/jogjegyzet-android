@@ -26,7 +26,7 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient,
                         Observable.just(ViewModel.Empty())
                     } else {
                         val docIds = results.filter { it is SearchResult.DocumentResult }
-                                .map { (results as SearchResult.DocumentResult).document.id }
+                                .map { (it as SearchResult.DocumentResult).document.id }
 
                         favoriteRepository.containsItems(docIds)
                                 .map { favouriteContains ->

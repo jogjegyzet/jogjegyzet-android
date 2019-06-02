@@ -134,6 +134,7 @@ class SearchController : BaseController() {
                             else -> R.string.search_error
                         }
                 )
+                Log.e("Search", "ERROR", vm.error)
             }
         }
     }

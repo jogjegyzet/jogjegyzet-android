@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
+        <com.gergelydaniel.jogjegyzet.ui.CardWithTitle
             android:id="@+id/card_favorites"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
@@ -19,41 +19,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="#fffaeb"
-            app:cardCornerRadius="4dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginLeft="60dp"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:gravity="top"
-                android:text="@string/favorites_card_title"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/ic_star"
-                android:tint="#FFC107"/>
+            app:title="@string/favorites_card_title"
+            app:icon_drawable="@drawable/ic_star"
+            app:icon_color="#FFC107">
 
             <com.gergelydaniel.jogjegyzet.ui.NotRecyclingView
                 android:id="@+id/list_favorites"
-                android:layout_marginTop="44dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
 
-        </android.support.v7.widget.CardView>
+        </com.gergelydaniel.jogjegyzet.ui.CardWithTitle>
 
 
-        <com.gergelydaniel.jogjegyzet.ui.NotRecyclingView
-            android:id="@+id/list_categories"
+        <com.gergelydaniel.jogjegyzet.ui.CardWithTitle
+            android:id="@+id/card_categories"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            app:cardBackgroundColor="#E8EAF6"
+            app:title="@string/card_title_categories"
+            app:icon_drawable="@drawable/ic_library_books"
+            app:icon_color="#3F51B5">
+
+            <com.gergelydaniel.jogjegyzet.ui.NotRecyclingView
+                android:id="@+id/list_categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+        </com.gergelydaniel.jogjegyzet.ui.CardWithTitle>
+
 
         <ProgressBar
             android:id="@+id/category_progress"

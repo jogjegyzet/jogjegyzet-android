@@ -25,7 +25,7 @@ internal class DocumentViewHolder(view: View) : ViewHolder(view) {
 private const val TYPE_CATEGORY = 1
 private const val TYPE_DOCUMENT = 2
 
-class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
+open class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
     var onClickListener : ((Either<Category, DocumentData>) -> Unit)? = null
 
     var data: List<Either<Category, DocumentData>> = listOf()

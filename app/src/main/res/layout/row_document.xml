@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="6dp"
         android:contentDescription="@string/category"
         android:src="@drawable/ic_document"/>
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="17dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="17dp"
         android:layout_toEndOf="@id/folder_image"
         tools:text="Fájl név"/>
@@ -28,6 +28,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EDEDED"/>
+        android:background="@color/colorSeparator"/>
 
 </RelativeLayout>

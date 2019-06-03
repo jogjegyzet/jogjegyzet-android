@@ -13,7 +13,9 @@ import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
+import com.gergelydaniel.jogjegyzet.ui.adapter.ViewHolder
 import com.gergelydaniel.jogjegyzet.util.Either
+import com.gergelydaniel.jogjegyzet.util.dp
 import com.gergelydaniel.jogjegyzet.util.vis
 import kotlinx.android.synthetic.main.controller_home.view.*
 import javax.inject.Inject
@@ -23,7 +25,7 @@ class HomeController : BaseController() {
     lateinit var presenter: HomePresenter
 
     private lateinit var categoriesAdapter: BrowserAdapter
-    private lateinit var favoritesAdapter: BrowserAdapter
+    private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         return inflater.inflate(R.layout.controller_home, container, false)
@@ -43,7 +45,7 @@ class HomeController : BaseController() {
         val adapterClickListener = AdapterClickListener(router)::onAdapterClick
         categoriesAdapter.onClickListener = adapterClickListener
 
-        favoritesAdapter = BrowserAdapter()
+        favoritesAdapter = FavoritesAdapter()
         view.list_favorites.adapter = favoritesAdapter
 
         favoritesAdapter.onClickListener = adapterClickListener
@@ -61,7 +63,8 @@ class HomeController : BaseController() {
         val view = view!!
 
         view.category_progress.vis = vm.categories is CategoriesViewModel.Loading
-        view.list_categories.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isNotEmpty()
+        view.card_favorites.vis = vm.categories is CategoriesViewModel.Data && vm.favorites.isNotEmpty()
+
         view.error.vis = vm.categories is CategoriesViewModel.Error
         view.empty.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isEmpty()
 
@@ -96,4 +99,11 @@ class HomeController : BaseController() {
         view.error_retry.setOnClickListener(null)
     }
 
+}
+
+private class FavoritesAdapter: BrowserAdapter() {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        holder.itemView.setBackgroundColor(0xFFFFFFFF.toInt())
+    }
 }

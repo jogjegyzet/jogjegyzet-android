@@ -20,7 +20,7 @@ class NotRecyclingView
             refresh()
         }
 
-    var observer = object : RecyclerView.AdapterDataObserver() {
+    private var observer = object : RecyclerView.AdapterDataObserver() {
         override fun onChanged() = refresh()
     }
 

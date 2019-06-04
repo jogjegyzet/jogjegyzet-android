@@ -1,6 +1,7 @@
 package com.gergelydaniel.jogjegyzet.ui.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,10 @@ import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.adapter.ViewHolder
 import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.vis
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.controller_home.view.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 import javax.inject.Inject
 
 class HomeController : BaseController() {
@@ -53,19 +57,20 @@ class HomeController : BaseController() {
 
         presenter.getViewModel()
                 .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
     }
 
     private fun render(vm: ViewModel) {
         val view = view!!
 
-        view.category_progress.vis = vm.categories is CategoriesViewModel.Loading
-        view.card_favorites.vis = vm.categories is CategoriesViewModel.Data && vm.favorites.isNotEmpty()
+        view.card_favorites.vis = vm.favorites.isNotEmpty()
 
-        view.card_categories.vis = vm.categories is CategoriesViewModel.Data
+        view.category_progress.vis = vm.categories is CategoriesViewModel.Loading
+        view.list_categories.vis = vm.categories is CategoriesViewModel.Data
 
         view.error.vis = vm.categories is CategoriesViewModel.Error
-        view.empty.vis = vm.categories is CategoriesViewModel.Data && vm.categories.categories.isEmpty()
+        favoritesAdapter.data = vm.favorites.map { Either.Right(DocumentData(it, true)) }
 
         when (vm.categories) {
             is CategoriesViewModel.Loading -> { }
@@ -83,7 +88,6 @@ class HomeController : BaseController() {
             }
         }
 
-        favoritesAdapter.data = vm.favorites.map { Either.Right(DocumentData(it, true)) }
     }
 
     override fun onDetach(view: View) {

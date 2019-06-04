@@ -51,41 +51,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
 
+            <ProgressBar
+                android:id="@+id/category_progress"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"/>
+
+            <FrameLayout
+                android:id="@+id/error"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="150dp"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/error_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/error_retry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/retry"/>
+            </FrameLayout>
+
         </com.gergelydaniel.jogjegyzet.ui.CardWithTitle>
 
 
-        <ProgressBar
-            android:id="@+id/category_progress"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"/>
-
-        <FrameLayout
-            android:id="@+id/error"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp">
-
-            <TextView
-                android:id="@+id/error_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/error_retry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/retry"/>
-
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/emptycat"/>
 
     </LinearLayout>
 </ScrollView>

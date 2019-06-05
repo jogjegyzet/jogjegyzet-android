@@ -1,8 +1,11 @@
 package com.gergelydaniel.jogjegyzet.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -78,8 +81,17 @@ class MainActivity : AppCompatActivity() {
     private fun setActionBarButtons() {
         val current = if (router.backstack.isEmpty()) null else router.backstack.last().controller()
 
+
         val isHome = current is HomeController
-        supportActionBar?.setDisplayHomeAsUpEnabled(!isHome)
+        Log.i("SEARCHASD", "setActionBarButtons, isHome: $isHome")
+
+        val actionBar = supportActionBar
+        val searchItem = searchItem
+
+        Log.i("SEARCHASD", "setActionBarButtons, actionBar: $actionBar")
+        actionBar?.setDisplayHomeAsUpEnabled(!isHome)
+
+        Log.i("SEARCHASD", "setActionBarButtons, searchItem: $searchItem")
         searchItem?.isVisible = isHome
     }
 
@@ -94,6 +106,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        Log.i("SEARCHASD", "onCreateOptionsMenu")
+
         menuInflater.inflate(R.menu.menu_main, menu)
 
         searchItem = menu!!.findItem(R.id.menuSearch)
@@ -102,18 +116,30 @@ class MainActivity : AppCompatActivity() {
 
         setActionBarButtons()
 
+        searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                Log.i("SEARCHASD", "onMenuItemActionExpand")
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                Log.i("SEARCHASD", "onMenuItemActionCollapse")
+                setActionBarButtons()
+                return true
+            }
+        })
+
+
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
-
-
                 return false
             }
 
             override fun onQueryTextChange(q: String): Boolean {
-                if (q.isNotEmpty()) {
+                val currentController = router.backstack.last().controller()
 
-                    val currentController = router.backstack.last().controller()
+                if (q.isNotEmpty()) {
 
                     val searchController = if (currentController !is SearchController) {
                         val newController = SearchController()
@@ -125,14 +151,47 @@ class MainActivity : AppCompatActivity() {
 
                     searchController.query = q
                 } else {
+                    Log.i("SEARCHASD", "q empty")
                     if (router.backstack[0].controller() is SearchController) {
                         router.popCurrentController()
+                        setActionBarButtons()
+                        Log.i("SEARCHASD", "popCurrent")
+                    } else {
+                        val currentAsSearchController = currentController as? SearchController
+                        currentAsSearchController?.query = ""
+                        Log.i("SEARCHASD", "NOT popCurrent")
+                        setActionBarButtons()
                     }
                 }
 
                 return false
             }
         })
+
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            Log.i("SEARCHASD", "setOnQueryTextFocusChangeListener hasFocus: $hasFocus")
+
+            val currentController = router.backstack.last().controller()
+            if (currentController is SearchController) {
+                router.popCurrentController()
+            }
+        }
+
+        searchView.setOnFocusChangeListener { _, hasFocus ->
+            Log.i("SEARCHASD", "setOnFocusChangeListener hasFocus: $hasFocus")
+        }
+
+        searchView.setOnCloseListener {
+            Log.i("SEARCHASD", "onClose")
+            val currentController = router.backstack.last().controller()
+
+            if (currentController is SearchController) {
+                router.popCurrentController()
+                setActionBarButtons()
+            }
+
+            true
+        }
 
         return super.onCreateOptionsMenu(menu)
     }

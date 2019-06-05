@@ -44,10 +44,6 @@ class SearchController : BaseController() {
             subscribe(value)
         }
 
-    init {
-        Log.i("ASD", "init")
-    }
-
     private fun subscribe(query: String) {
         viewModelSub?.dispose()
 
@@ -111,7 +107,8 @@ class SearchController : BaseController() {
         view.category_progress.vis = vm is ViewModel.Loading
         view.recycler_view.vis = vm is ViewModel.Data
         view.error.vis = vm is ViewModel.Error
-        view.empty.vis = vm is ViewModel.Empty
+
+        view.empty.vis = (vm is ViewModel.Empty) || (vm is ViewModel.EmtpySearch)
 
         when(vm) {
             is ViewModel.Loading -> { }
@@ -126,6 +123,9 @@ class SearchController : BaseController() {
             }
             is ViewModel.Empty -> {
                 view.empty.text = view.context.getString(R.string.noresult, _query)
+            }
+            is ViewModel.EmtpySearch -> {
+                view.empty.text = view.context.getString(R.string.search_empty_query)
             }
             is ViewModel.Error -> {
                 view.error_text.setText(

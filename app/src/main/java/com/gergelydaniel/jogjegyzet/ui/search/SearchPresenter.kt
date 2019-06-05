@@ -18,12 +18,14 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient,
     private val retrySubject = PublishSubject.create<Any>()
 
     fun getViewModel(query: String): Observable<ViewModel> {
+        if (query.isEmpty()) return Observable.just(ViewModel.EmtpySearch)
+
         return apiClient.search(query)
                 .toObservable()
                 .flatMap { results ->
 
                     if(results.isEmpty()) {
-                        Observable.just(ViewModel.Empty())
+                        Observable.just(ViewModel.Empty)
                     } else {
                         val docIds = results.filter { it is SearchResult.DocumentResult }
                                 .map { (it as SearchResult.DocumentResult).document.id }
@@ -48,7 +50,7 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient,
                         //ViewModel.Data(DocumentData(it, ))
                     }
                 }
-                .startWith(ViewModel.Loading())
+                .startWith(ViewModel.Loading)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onErrorReturn { ViewModel.Error(it) }
@@ -61,10 +63,11 @@ class SearchPresenter @Inject constructor(private val apiClient: ApiClient,
 }
 
 sealed class ViewModel {
-    class Loading : ViewModel()
+    object Loading : ViewModel()
     class Data(val data: List<SearchResultViewModel>) : ViewModel()
-    class Empty : ViewModel()
+    object Empty : ViewModel()
     class Error(val error: Throwable) : ViewModel()
+    object EmtpySearch : ViewModel()
 }
 
 sealed class SearchResultViewModel {

@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.gergelydaniel.jogjegyzet.ui.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <com.gergelydaniel.jogjegyzet.ui.TitleView
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:background="@color/colorPrimary"
-        app:titleTextAppearance="@style/TitleText"
-        android:theme="@style/AppToolbar"
-        app:titleTextColor="#FFFFFF"
-        android:layout_alignParentTop="true"
-        app:contentInsetStartWithNavigation="0dp"/>
+        android:layout_alignParentTop="true"/>
 
     <com.bluelinelabs.conductor.ChangeHandlerFrameLayout
         android:id="@+id/outlet"

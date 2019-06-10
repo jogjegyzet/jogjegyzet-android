@@ -23,4 +23,5 @@
     <string name="favorites_card_title">Kedvencek:</string>
     <string name="card_title_categories">Kategóriák:</string>
     <string name="search_empty_query">Írjon be egy kifejezést a kereséshez</string>
+    <string name="back">Vissza</string>
 </resources>

@@ -2,9 +2,8 @@ package com.gergelydaniel.jogjegyzet.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Router
-import com.bluelinelabs.conductor.RouterTransaction
+import android.view.ViewGroup
+import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.home.HomeController
 import dagger.android.AndroidInjection
@@ -12,7 +11,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChangeListener {
     private lateinit var router: Router
 
     var titleSub: Disposable? = null
@@ -34,11 +33,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        toolbar.title = "Jogjegyzet"
+        router.addChangeListener(this)
+
+        toolbar.backVisible = false
+        toolbar.onBackPressed = ::onBackPressed
+
+        resetTitle()
+    }
+
+    private fun resetTitle() {
+        toolbar.title = getString(R.string.app_name)
+    }
+
+    override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
+        titleSub?.dispose()
+        if (to is TitleProvider) {
+            titleSub = subscribeToTitle(to)
+        } else {
+            resetTitle()
+        }
+
+        toolbar.backVisible = to !is HomeController
+    }
+
+    override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
+
     }
 
     private fun subscribeToTitle(provider: TitleProvider) = provider.title.subscribe {
-
+        toolbar.title = it
     }
 
 

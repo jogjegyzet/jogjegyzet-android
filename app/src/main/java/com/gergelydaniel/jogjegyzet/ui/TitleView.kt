@@ -27,6 +27,8 @@ class TitleView @JvmOverloads constructor(
             button_back.vis = value
         }
 
+    lateinit var onBackPressed: () -> Unit
+
     init {
         View.inflate(context, R.layout.view_title, this)
 
@@ -34,6 +36,12 @@ class TitleView @JvmOverloads constructor(
         setBackgroundColor(primaryColor())
 
         setPadding(10.px, 0, 0, 8.px)
+
+        button_back.setOnClickListener {
+            if (onBackPressed != null) {
+                onBackPressed()
+            }
+        }
     }
 
     private fun primaryColor(): Int {

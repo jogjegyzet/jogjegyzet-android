@@ -21,6 +21,8 @@
         android:layout_weight="1"
         android:textAppearance="@style/TitleText"
         android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
         />
 
     <ImageButton

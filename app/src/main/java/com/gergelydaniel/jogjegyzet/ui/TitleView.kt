@@ -27,6 +27,12 @@ class TitleView @JvmOverloads constructor(
             button_back.vis = value
         }
 
+    var searchEnabled: Boolean
+        get() = button_search.vis
+        set(value) {
+            button_search.vis = value
+        }
+
     lateinit var onBackPressed: () -> Unit
 
     init {

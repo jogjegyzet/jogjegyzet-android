@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         toolbar.title = getString(R.string.app_name)
     }
 
-    // TODO create an Observable from this
     override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
         titleSub?.dispose()
         if (to is TitleProvider) {
@@ -67,11 +66,12 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         if (to !is SearchController) {
             toolbar.searchEnabled = to is HomeController
             toolbar.backVisible = to !is HomeController
+        } else if (from !is HomeController) {
+            toolbar.setSearchState(to.query)
         }
     }
 
     override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
-
     }
 
     private fun subscribeToTitle(provider: TitleProvider) = provider.title.subscribe {

@@ -44,13 +44,12 @@ class TitleView @JvmOverloads constructor(
     var searchEnabled: Boolean
         get() = state != SEARCH_DISABLED
         set(value) {
-            if (value && state == SEARCH_DISABLED) {
+            if (value) {
                 state = SEARCH_ENABLED
-                setViewVisibility()
-            } else if (!value && state != SEARCH_DISABLED) {
+            } else if (!value) {
                 state = SEARCH_DISABLED
-                setViewVisibility()
             }
+            setViewVisibility()
         }
 
     var onBackPressed: (() -> Unit)? = null
@@ -145,6 +144,14 @@ class TitleView @JvmOverloads constructor(
                 button_clear.show()
             }
         }
+    }
+
+    fun setSearchState(query: String) {
+        state = SEARCH_TYPING
+        setViewVisibility()
+
+        search_field.setText(query)
+        search_field.setSelection(search_field.text.toString().length)
     }
 
     private fun primaryColor(): Int {

@@ -2,7 +2,6 @@ package com.gergelydaniel.jogjegyzet.di.documentcontroller
 
 import com.bluelinelabs.conductor.Controller
 import com.christianbahl.conductor.ControllerKey
-import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import dagger.Binds
 import dagger.Module

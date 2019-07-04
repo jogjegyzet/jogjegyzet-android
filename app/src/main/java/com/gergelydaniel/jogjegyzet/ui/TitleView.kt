@@ -114,6 +114,10 @@ class TitleView @JvmOverloads constructor(
         })
 
         search_field.requestFocus()
+
+        button_clear.setOnClickListener {
+            search_field.setText("")
+        }
     }
 
     private fun setViewVisibility() {

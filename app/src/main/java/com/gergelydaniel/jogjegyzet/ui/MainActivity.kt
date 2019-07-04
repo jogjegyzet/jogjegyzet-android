@@ -2,10 +2,12 @@ package com.gergelydaniel.jogjegyzet.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.home.HomeController
+import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,7 +28,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         if (!router.hasRootController()) {
             router.setRoot(RouterTransaction.with(HomeController()))
         }
-        if(titleSub == null) {
+        if (titleSub == null) {
             val current = router.backstack.last().controller()
             if (current is TitleProvider) {
                 titleSub = subscribeToTitle(current)
@@ -37,8 +39,16 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
         toolbar.backVisible = false
         toolbar.onBackPressed = ::onBackPressed
+        toolbar.onTextChanged = ::onQueryTextChange
+        toolbar.onSearchCancelled = this::onSearchCancelled
 
         resetTitle()
+    }
+
+    private fun onSearchCancelled() {
+        if (currentController() is SearchController) {
+            router.popCurrentController()
+        }
     }
 
     private fun resetTitle() {
@@ -54,8 +64,10 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
             resetTitle()
         }
 
-        toolbar.searchEnabled = to is HomeController
-        toolbar.backVisible = to !is HomeController
+        if (to !is SearchController) {
+            toolbar.searchEnabled = to is HomeController
+            toolbar.backVisible = to !is HomeController
+        }
     }
 
     override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
@@ -72,4 +84,22 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
             super.onBackPressed()
         }
     }
+
+    private fun onQueryTextChange(q: CharSequence) {
+        val currentController = currentController()
+
+        val searchController = if (currentController !is SearchController) {
+            val newController = SearchController()
+            router.pushController(RouterTransaction.with(newController))
+            newController
+        } else {
+            currentController
+        }
+
+        searchController.query = q.toString()
+
+    }
+
+    private fun currentController() = router.backstack.last().controller()
+
 }

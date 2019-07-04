@@ -1,6 +1,8 @@
 package com.gergelydaniel.jogjegyzet.ui
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -51,7 +53,11 @@ class TitleView @JvmOverloads constructor(
             }
         }
 
-    lateinit var onBackPressed: () -> Unit
+    var onBackPressed: (() -> Unit)? = null
+    var onTextChanged: ((CharSequence) -> Unit)? = null
+    var onSearchCancelled: (() -> Unit)? = null
+
+    private var textChangeNoEventFlag = false
 
     init {
         View.inflate(context, com.gergelydaniel.jogjegyzet.R.layout.view_title, this)
@@ -67,6 +73,8 @@ class TitleView @JvmOverloads constructor(
                 SEARCH_TYPING -> {
                     state = SEARCH_ENABLED
                     setViewVisibility()
+
+                    onSearchCancelled?.invoke()
                 }
                 else -> onBackPressed?.invoke()
             }
@@ -91,10 +99,27 @@ class TitleView @JvmOverloads constructor(
             }
         }
 
+        search_field.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (! textChangeNoEventFlag) onTextChanged?.invoke(s)
+            }
+
+        })
+
         search_field.requestFocus()
     }
 
     private fun setViewVisibility() {
+        textChangeNoEventFlag = true
+        search_field.setText("")
+        textChangeNoEventFlag = false
+
         when (state) {
             SEARCH_ENABLED -> {
                 button_search.show()

@@ -7,17 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.NoInternetException
-import com.gergelydaniel.jogjegyzet.domain.SearchResult
 import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
-import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
-import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.vis
 import com.jakewharton.rxbinding2.view.RxView
@@ -53,34 +48,26 @@ class SearchController : BaseController() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-        Log.i("ASD", "onCreateView")
         return inflater.inflate(R.layout.controller_main, container, false)
     }
 
     override fun onFirstAttach() {
         ConductorInjection.inject(this)
-        Log.i("ASD", "onFirstAttach")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.i("ASD", "onSave")
         outState.putString(KEY_QUERY, query)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        Log.i("ASD", "onRestore")
-
         query = savedInstanceState.getString(KEY_QUERY)
     }
 
     @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
-
-        Log.i("ASD", "onAttach")
-
 
         linearLayoutManager = LinearLayoutManager(view.context)
         view.recycler_view.layoutManager = linearLayoutManager

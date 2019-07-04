@@ -85,6 +85,8 @@ class TitleView @JvmOverloads constructor(
                 state = SEARCH_TYPING
                 setViewVisibility()
                 search_field.requestFocus()
+
+                onTextChanged?.invoke("")
             }
         }
 

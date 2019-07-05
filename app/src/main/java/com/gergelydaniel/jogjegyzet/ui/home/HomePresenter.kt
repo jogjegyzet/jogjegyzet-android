@@ -28,7 +28,7 @@ class HomePresenter @Inject constructor(private val categoryRepository: Category
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()),
 
-                favoriteRepository.getFavorites().toObservable()
+                favoriteRepository.getFavorites()
         ) { cats, favs -> ViewModel(cats, favs) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

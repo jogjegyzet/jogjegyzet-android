@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         }
         if (titleSub == null) {
             val current = router.backstack.last().controller()
-            if (current is TitleProvider) {
+            if (current is BaseController) {
                 titleSub = subscribeToTitle(current)
             }
         }
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
     override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
         titleSub?.dispose()
-        if (to is TitleProvider) {
+        if (to is BaseController) {
             titleSub = subscribeToTitle(to)
         } else {
             resetTitle()
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
     override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
     }
 
-    private fun subscribeToTitle(provider: TitleProvider) = provider.title.subscribe {
+    private fun subscribeToTitle(provider: BaseController) = provider.title.subscribe {
         toolbar.title = it
     }
 

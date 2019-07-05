@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gergelydaniel.jogjegyzet.ui.BaseController
-import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,7 +16,7 @@ import java.net.URL
 private const val KEY_URL = "url"
 private const val KEY_TITLE = "title"
 
-class ReaderController(private val url: String, private val docTitle: String) : BaseController(), TitleProvider {
+class ReaderController(private val url: String, private val docTitle: String) : BaseController() {
     private lateinit var pdfView: PDFView
 
     constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE))

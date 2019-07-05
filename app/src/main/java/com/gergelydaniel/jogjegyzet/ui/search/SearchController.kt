@@ -16,6 +16,7 @@ import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.vis
 import com.jakewharton.rxbinding2.view.RxView
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.controller_main.view.*
 import javax.inject.Inject
@@ -27,6 +28,8 @@ class SearchController : BaseController() {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: BrowserAdapter
+
+    override val title: Observable<String> = Observable.just("")
 
     private var viewModelSub : Disposable? = null
 

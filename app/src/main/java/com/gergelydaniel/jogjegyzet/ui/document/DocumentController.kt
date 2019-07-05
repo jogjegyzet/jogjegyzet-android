@@ -10,10 +10,8 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
-import com.gergelydaniel.jogjegyzet.domain.Document
 import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.BaseController
-import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.reader.ReaderController
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
@@ -26,7 +24,7 @@ import javax.inject.Inject
 
 private const val KEY_ID = "docId"
 
-class DocumentController : BaseController, TitleProvider {
+class DocumentController : BaseController {
     @Inject
     internal lateinit var presenter : DocumentPresenter
 

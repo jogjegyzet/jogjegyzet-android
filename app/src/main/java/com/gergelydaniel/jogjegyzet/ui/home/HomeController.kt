@@ -15,7 +15,9 @@ import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
 import com.gergelydaniel.jogjegyzet.ui.adapter.ViewHolder
 import com.gergelydaniel.jogjegyzet.util.Either
 import com.gergelydaniel.jogjegyzet.util.vis
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_home.view.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
@@ -36,9 +38,13 @@ class HomeController : BaseController() {
         ConductorInjection.inject(this)
     }
 
+    override val title: BehaviorSubject<String> = BehaviorSubject.create()
+
     @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
+
+        title.onNext(view.context.getString(R.string.app_name))
 
         categoriesAdapter = CardBrowserAdapter()
         view.list_categories.adapter = categoriesAdapter

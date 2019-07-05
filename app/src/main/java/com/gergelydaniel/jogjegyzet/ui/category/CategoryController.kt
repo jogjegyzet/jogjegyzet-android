@@ -7,19 +7,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.domain.NoInternetException
 import com.gergelydaniel.jogjegyzet.ui.AdapterClickListener
 import com.gergelydaniel.jogjegyzet.ui.BaseController
-import com.gergelydaniel.jogjegyzet.ui.TitleProvider
 import com.gergelydaniel.jogjegyzet.ui.adapter.BrowserAdapter
-import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.gergelydaniel.jogjegyzet.util.Either
-import com.gergelydaniel.jogjegyzet.util.hide
-import com.gergelydaniel.jogjegyzet.util.show
 import com.gergelydaniel.jogjegyzet.util.vis
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
@@ -29,7 +23,7 @@ import javax.inject.Inject
 
 const val KEY_SCROLL = "SCROLL"
 
-class CategoryController(val catId: String? = null) : BaseController(), TitleProvider {
+class CategoryController(val catId: String? = null) : BaseController() {
     @Inject
     internal lateinit var presenter: CategoryPresenter
 

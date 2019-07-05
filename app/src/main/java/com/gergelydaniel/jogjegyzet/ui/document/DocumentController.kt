@@ -6,16 +6,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bluelinelabs.conductor.RouterTransaction
-import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.BaseController
-import com.gergelydaniel.jogjegyzet.ui.reader.ReaderController
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.show
-import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -81,17 +77,8 @@ class DocumentController : BaseController {
                 .compose(bindToLifecycle())
                 .subscribe { titleSubject.onNext(it) }
 
-        view.button_favorite.setOnClickListener {
-            presenter.addToFavorites()
-                    .toObservable<String>()
-                    .compose(bindToLifecycle())
-                    .subscribe()
-        }
     }
 
-    override fun onDetach(view: View) {
-        view.button_favorite.setOnClickListener(null)
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -133,12 +120,6 @@ class DocumentController : BaseController {
                 view.num_dislikes.text = document.document.negRatings.toString()
                 view.rating_bar.setData(document.document.posRatings, document.document.negRatings)
 
-                if (vm.document.isInFavorites) {
-                    view.button_favorite.setBackgroundResource(R.drawable.ic_star_border)
-                } else {
-                    view.button_favorite.setBackgroundResource(R.drawable.ic_star)
-                }
-
                 when (vm.comments) {
                     is CommentsViewModel.Loading -> {
                         view.comments_empty.hide()
@@ -163,16 +144,6 @@ class DocumentController : BaseController {
                         view.comments.hide()
                     }
                 }
-
-                RxView.clicks(view.button_read)
-                        .compose(bindToLifecycle())
-                        .subscribe {
-                            router.pushController(
-                                    RouterTransaction.with(ReaderController(document.document.fileUrl, document.document.name))
-                                            .popChangeHandler(HorizontalChangeHandler())
-                                            .pushChangeHandler(HorizontalChangeHandler())
-                            )
-                        }
             }
         }
     }

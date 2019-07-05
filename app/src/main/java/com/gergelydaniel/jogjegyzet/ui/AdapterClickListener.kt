@@ -21,7 +21,7 @@ class AdapterClickListener(private val router: Router) {
 
             is Either.Right ->
                 router.pushController(
-                        RouterTransaction.with(ReaderController(item.value.document.fileUrl, item.value.document.name))
+                        RouterTransaction.with(ReaderController(item.value.document.fileUrl, item.value.document.name, item.value.document.id))
                                 .popChangeHandler(HorizontalChangeHandler())
                                 .pushChangeHandler(HorizontalChangeHandler())
                 )

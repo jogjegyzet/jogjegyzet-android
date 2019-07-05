@@ -24,6 +24,7 @@ abstract class BaseController : RxController() {
         }
     }
 
-    open fun onFirstAttach() {}
+    protected open fun onFirstAttach() {}
 
+    open fun onMenuItemClick(index: Int) {}
 }

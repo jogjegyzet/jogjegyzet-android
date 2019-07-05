@@ -48,13 +48,19 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         toolbar.backVisible = false
         toolbar.onBackPressed = ::onBackPressed
         toolbar.onTextChanged = ::onQueryTextChange
-        toolbar.onSearchCancelled = this::onSearchCancelled
+        toolbar.onSearchCancelled = ::onSearchCancelled
+        toolbar.onMenuItemClicked = ::onMenuItemClicked
     }
 
     private fun onSearchCancelled() {
         if (currentController() is SearchController) {
             router.popCurrentController()
         }
+    }
+
+    private fun onMenuItemClicked(index: Int) {
+        val current = currentController()
+        (current as? BaseController)?.onMenuItemClick(index)
     }
 
     override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {

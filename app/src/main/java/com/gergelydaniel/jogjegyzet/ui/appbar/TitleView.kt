@@ -21,7 +21,7 @@ import android.widget.ImageButton
 
 class TitleView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr), View.OnClickListener {
 
     private enum class State {
         SEARCH_ENABLED,
@@ -69,6 +69,7 @@ class TitleView @JvmOverloads constructor(
     var onBackPressed: (() -> Unit)? = null
     var onTextChanged: ((CharSequence) -> Unit)? = null
     var onSearchCancelled: (() -> Unit)? = null
+    var onMenuItemClicked: ((Int) -> Unit)? = null
 
     private var textChangeNoEventFlag = false
 
@@ -185,8 +186,18 @@ class TitleView @JvmOverloads constructor(
             lp.setMargins(2.px, 12.px, 6.px, 0)
             view.layoutParams = lp
 
+            view.setOnClickListener(this)
+
             menuItemViews.add(view)
             addView(view)
+        }
+    }
+
+    override fun onClick(v: View?) {
+        val index = menuItemViews.indexOf(v)
+
+        if (index != -1) {
+            onMenuItemClicked?.invoke(index)
         }
     }
 

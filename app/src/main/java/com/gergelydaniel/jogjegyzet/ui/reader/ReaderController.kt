@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.appbar.MenuItem
+import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
+import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,11 +22,14 @@ import java.net.URL
 
 private const val KEY_URL = "url"
 private const val KEY_TITLE = "title"
+private const val KEY_ID = "id"
 
-class ReaderController(private val url: String, private val docTitle: String) : BaseController() {
+class ReaderController(private val url: String,
+                       private val docTitle: String,
+                       private val docId: String) : BaseController() {
     private lateinit var pdfView: PDFView
 
-    constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE))
+    constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE), args.getString(KEY_ID))
 
     override val title: Observable<String> = Observable.just(docTitle)
     override val icons: Observable<List<MenuItem>> = Observable.just(listOf(MenuItem(R.drawable.ic_info, R.string.info)))
@@ -57,5 +64,13 @@ class ReaderController(private val url: String, private val docTitle: String) : 
         super.onSaveInstanceState(outState)
         outState.putString(KEY_URL, url)
         outState.putString(KEY_TITLE, docTitle)
+    }
+
+    override fun onMenuItemClick(index: Int) {
+        router.pushController(
+                RouterTransaction.with(DocumentController(docId))
+                        .popChangeHandler(HorizontalChangeHandler())
+                        .pushChangeHandler(HorizontalChangeHandler())
+        )
     }
 }

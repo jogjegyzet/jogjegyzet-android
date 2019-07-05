@@ -31,6 +31,7 @@ class ReaderController(private val id: String) : BaseController() {
     internal lateinit var presenter: ReaderPresenter
 
     private var isInFavourites: Boolean? = null
+    private var url: String? = null
 
     constructor(args: Bundle) : this(args.getString(KEY_ID)!!)
 
@@ -61,22 +62,25 @@ class ReaderController(private val id: String) : BaseController() {
 
     @SuppressLint("CheckResult")
     private fun render(data: DocumentData) {
-        Observable.fromCallable { URL(data.document.fileUrl).openStream() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(bindToLifecycle())
-                .subscribe {
-                    pdfView.fromStream(it)
-                            .spacing(8)
-                            .onPageError { i, t ->
-                                t.printStackTrace()
-                            }
-                            .load()
-                }
+        if (url != data.document.fileUrl) {
+            Observable.fromCallable { URL(data.document.fileUrl).openStream() }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .compose(bindToLifecycle())
+                    .subscribe {
+                        pdfView.fromStream(it)
+                                .spacing(8)
+                                .onPageError { i, t ->
+                                    t.printStackTrace()
+                                }
+                                .load()
+                    }
+        }
 
         title.onNext(data.document.name)
 
         isInFavourites = data.isInFavorites
+        url = data.document.fileUrl
 
         val favoritesMenuItem = if (data.isInFavorites) {
             MenuItem(R.drawable.ic_star_border, R.string.remove_from_favorites)

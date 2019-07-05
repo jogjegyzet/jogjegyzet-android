@@ -36,12 +36,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
             router.setRoot(RouterTransaction.with(homeController))
             currentController.onNext(homeController)
         }
-        //if (titleSub == null) {
-        //    val current = router.backstack.last().controller()
-        //    if (current is BaseController) {
-        //        titleSub = subscribeToTitle(current)
-        //    }
-        //}
 
         router.addChangeListener(this)
 

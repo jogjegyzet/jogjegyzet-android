@@ -2,6 +2,8 @@ package com.gergelydaniel.jogjegyzet.ui.reader
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.appbar.MenuItem
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.github.barteksc.pdfviewer.PDFView
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -103,15 +106,29 @@ class ReaderController(private val id: String) : BaseController() {
             0 -> {
                 val inFavs = isInFavourites
                 if (inFavs != null) {
+                    val undoAction: Completable
+                    val actionText: Int
+
                     val obs = if (inFavs) {
+                        actionText = R.string.removed_from_favs
+                        undoAction = presenter.undoRemoveFromFavourites()
                         presenter.removeFromFavorites()
                     } else {
+                        actionText = R.string.added_to_favs
+                        undoAction = presenter.undoAddToFavourites()
                         presenter.addToFavorites()
                     }
 
                     obs
                             .toObservable<Any>()
                             .compose(bindToLifecycle())
+                            .doOnComplete {
+                                Snackbar.make(view!!, actionText, 5000)
+                                        .setAction(R.string.undo) {
+                                            undoAction.subscribe()
+                                        }
+                                        .show()
+                            }
                             .subscribe()
                 }
             }

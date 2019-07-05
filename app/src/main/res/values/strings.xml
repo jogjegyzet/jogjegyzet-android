@@ -27,4 +27,7 @@
     <string name="back">Vissza</string>
     <string name="clear">Törlés</string>
     <string name="info">Részletek</string>
+    <string name="undo">Visszavonás</string>
+    <string name="added_to_favs">Hozzáadva a kedvencekhez</string>
+    <string name="removed_from_favs">Eltávolítva a kedvencek közül</string>
 </resources>

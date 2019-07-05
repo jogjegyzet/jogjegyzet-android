@@ -41,4 +41,10 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete { refreshSubject.onNext(Any()) }
     }
+
+    fun undoAddToFavourites(): Completable = removeFromFavorites()
+
+    fun undoRemoveFromFavourites(): Completable {
+        return Completable.complete()
+    }
 }

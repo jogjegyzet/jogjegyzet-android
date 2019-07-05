@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -123,7 +124,7 @@ class TitleView @JvmOverloads constructor(
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (! textChangeNoEventFlag) onTextChanged?.invoke(s)
+                if (! textChangeNoEventFlag && state == SEARCH_TYPING) onTextChanged?.invoke(s)
             }
 
         })

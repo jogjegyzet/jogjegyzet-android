@@ -6,6 +6,7 @@ import com.gergelydaniel.jogjegyzet.di.categorycontroller.CategoryControllerModu
 import com.gergelydaniel.jogjegyzet.di.documentcontroller.DocumentControllerModule
 import com.gergelydaniel.jogjegyzet.di.homecontroller.HomeControllerModule
 import com.gergelydaniel.jogjegyzet.di.mainactivity.MainActivityModule
+import com.gergelydaniel.jogjegyzet.di.readercontroller.ReaderControllerModule
 import com.gergelydaniel.jogjegyzet.di.searchcontroller.SearchControllerModule
 import dagger.BindsInstance
 import dagger.Component
@@ -22,6 +23,7 @@ import javax.inject.Singleton
     MainActivityModule::class,
     CategoryControllerModule::class,
     DocumentControllerModule::class,
+    ReaderControllerModule::class,
     SearchControllerModule::class,
     HomeControllerModule::class,
     ConfigModule::class,

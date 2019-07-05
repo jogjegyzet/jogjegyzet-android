@@ -20,6 +20,7 @@
     <string name="no_comment">Nincs hozzászólás</string>
     <string name="retry">Újratöltés</string>
     <string name="add_to_favorites">Hozzáadás a kedvencekhez</string>
+    <string name="remove_from_favorites">Eltávolítás a kedvencek közül</string>
     <string name="favorites_card_title">Kedvencek:</string>
     <string name="card_title_categories">Kategóriák:</string>
     <string name="search_empty_query">Írjon be egy kifejezést a kereséshez</string>

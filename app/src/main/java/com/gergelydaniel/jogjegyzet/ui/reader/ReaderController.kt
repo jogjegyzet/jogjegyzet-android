@@ -7,32 +7,35 @@ import android.view.View
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
+import com.christianbahl.conductor.ConductorInjection
 import com.gergelydaniel.jogjegyzet.R
+import com.gergelydaniel.jogjegyzet.service.DocumentData
 import com.gergelydaniel.jogjegyzet.ui.BaseController
 import com.gergelydaniel.jogjegyzet.ui.appbar.MenuItem
-import com.gergelydaniel.jogjegyzet.ui.category.CategoryController
 import com.gergelydaniel.jogjegyzet.ui.document.DocumentController
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.view_title.view.*
+import io.reactivex.subjects.BehaviorSubject
 import java.net.URL
+import javax.inject.Inject
 
 
-private const val KEY_URL = "url"
-private const val KEY_TITLE = "title"
 private const val KEY_ID = "id"
 
-class ReaderController(private val url: String,
-                       private val docTitle: String,
-                       private val docId: String) : BaseController() {
+class ReaderController(private val id: String) : BaseController() {
     private lateinit var pdfView: PDFView
 
-    constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE), args.getString(KEY_ID))
+    @Inject
+    internal lateinit var presenter: ReaderPresenter
 
-    override val title: Observable<String> = Observable.just(docTitle)
-    override val icons: Observable<List<MenuItem>> = Observable.just(listOf(MenuItem(R.drawable.ic_info, R.string.info)))
+    private var isInFavourites: Boolean? = null
+
+    constructor(args: Bundle) : this(args.getString(KEY_ID)!!)
+
+    override val title: BehaviorSubject<String> = BehaviorSubject.create()
+    override val icons: BehaviorSubject<List<MenuItem>> = BehaviorSubject.create()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         pdfView = PDFView(inflater.context, null)
@@ -41,11 +44,24 @@ class ReaderController(private val url: String,
         return pdfView
     }
 
+    override fun onFirstAttach() {
+        ConductorInjection.inject(this)
+    }
+
     @SuppressLint("CheckResult")
     override fun onAttach(view: View) {
         super.onAttach(view)
 
-        Observable.fromCallable { URL(url).openStream() }
+        presenter.getViewModel(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(bindToLifecycle())
+                .subscribe(::render)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun render(data: DocumentData) {
+        Observable.fromCallable { URL(data.document.fileUrl).openStream() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(bindToLifecycle())
@@ -58,19 +74,48 @@ class ReaderController(private val url: String,
                             .load()
                 }
 
+        title.onNext(data.document.name)
+
+        isInFavourites = data.isInFavorites
+
+        val favoritesMenuItem = if (data.isInFavorites) {
+            MenuItem(R.drawable.ic_star_border, R.string.remove_from_favorites)
+        } else {
+            MenuItem(R.drawable.ic_star, R.string.add_to_favorites)
+        }
+
+        val menuItems = listOf(favoritesMenuItem, MenuItem(R.drawable.ic_info, R.string.info))
+
+        icons.onNext(menuItems)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_URL, url)
-        outState.putString(KEY_TITLE, docTitle)
+        outState.putString(KEY_ID, id)
     }
 
     override fun onMenuItemClick(index: Int) {
-        router.pushController(
-                RouterTransaction.with(DocumentController(docId))
-                        .popChangeHandler(HorizontalChangeHandler())
-                        .pushChangeHandler(HorizontalChangeHandler())
-        )
+        when(index) {
+            0 -> {
+                val inFavs = isInFavourites
+                if (inFavs != null) {
+                    val obs = if (inFavs) {
+                        presenter.removeFromFavorites()
+                    } else {
+                        presenter.addToFavorites()
+                    }
+
+                    obs
+                            .toObservable<Any>()
+                            .compose(bindToLifecycle())
+                            .subscribe()
+                }
+            }
+            1 -> router.pushController(
+                        RouterTransaction.with(DocumentController(id))
+                                .popChangeHandler(HorizontalChangeHandler())
+                                .pushChangeHandler(HorizontalChangeHandler()))
+
+        }
     }
 }

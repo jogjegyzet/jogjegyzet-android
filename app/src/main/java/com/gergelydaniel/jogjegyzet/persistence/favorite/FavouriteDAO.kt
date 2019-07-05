@@ -7,6 +7,9 @@ abstract class FavouriteDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(entity: FavoriteEntity)
 
+    @Query("DELETE FROM favorite WHERE doc_id = :id")
+    abstract fun deleteById(id: String)
+
     @Query("SELECT * FROM favorite ORDER BY `order`")
     abstract fun getAll(): Array<FavoriteEntity>
 

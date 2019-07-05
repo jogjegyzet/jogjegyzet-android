@@ -20,6 +20,10 @@ class FavoriteRepository @Inject constructor(private val db: JogjegyzetDatabase)
     fun getById(id: String): Maybe<Document> =
             Maybe.fromCallable { db.favoriteDao().getById(id)?.let(::mapFromEntity) }
 
+    fun deleteById(id: String) = Completable.fromAction {
+        db.favoriteDao().deleteById(id)
+    }
+
     fun insert(document: Document): Completable =
             Completable.fromAction { db.favoriteDao().insert(document.let(::mapToEntity)) }
 

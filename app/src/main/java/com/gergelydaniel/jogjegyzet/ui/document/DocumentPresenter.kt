@@ -74,15 +74,6 @@ class DocumentPresenter @Inject constructor(
         return obs
     }
 
-    fun addToFavorites(): Completable {
-        return docSubject
-                .filter { it != null }
-                .take(1)
-                .flatMapCompletable { favoriteRepository.insert(it.document).subscribeOn(Schedulers.io()) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete { refreshSubject.onNext(Any()) }
-    }
-
     val title: Observable<String> get() =
             docSubject.map { it.document.name }
 

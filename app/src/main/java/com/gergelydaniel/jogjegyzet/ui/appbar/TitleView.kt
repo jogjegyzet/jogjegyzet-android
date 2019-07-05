@@ -1,13 +1,14 @@
-package com.gergelydaniel.jogjegyzet.ui
+package com.gergelydaniel.jogjegyzet.ui.appbar
 
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import com.gergelydaniel.jogjegyzet.ui.TitleView.State.*
+import com.gergelydaniel.jogjegyzet.ui.appbar.TitleView.State.*
 import com.gergelydaniel.jogjegyzet.util.hide
 import com.gergelydaniel.jogjegyzet.util.px
 import com.gergelydaniel.jogjegyzet.util.show
@@ -15,7 +16,7 @@ import com.gergelydaniel.jogjegyzet.util.vis
 import kotlinx.android.synthetic.main.view_title.view.*
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.HIDE_IMPLICIT_ONLY
+import android.widget.ImageButton
 
 
 class TitleView @JvmOverloads constructor(
@@ -50,6 +51,19 @@ class TitleView @JvmOverloads constructor(
                 state = SEARCH_DISABLED
             }
             setViewVisibility()
+        }
+
+    private var _menuItems: MutableList<MenuItem> = mutableListOf()
+    private var menuItemViews = mutableListOf<ImageButton>()
+
+    var menuItems: List<MenuItem>
+        get() {
+            return _menuItems
+        }
+        set(value) {
+            _menuItems.clear()
+            _menuItems.addAll(value)
+            setMenuItems()
         }
 
     var onBackPressed: (() -> Unit)? = null
@@ -147,6 +161,23 @@ class TitleView @JvmOverloads constructor(
                 search_field.show()
                 button_clear.show()
             }
+        }
+    }
+
+    private fun setMenuItems() {
+        for (view in menuItemViews) {
+            removeViewInLayout(view)
+        }
+
+        menuItemViews.clear()
+
+        for (item in _menuItems) {
+            val view = ImageButton(context)
+
+            view.setImageResource(item.iconRes)
+
+            menuItemViews.add(view)
+            addView(view)
         }
     }
 

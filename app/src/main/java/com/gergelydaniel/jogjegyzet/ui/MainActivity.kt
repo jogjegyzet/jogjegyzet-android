@@ -9,14 +9,20 @@ import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.home.HomeController
 import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChangeListener {
     private lateinit var router: Router
 
-    var titleSub: Disposable? = null
+    private lateinit var subscriptions: CompositeDisposable
+
+    private val currentController: Subject<BaseController> = BehaviorSubject.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +32,16 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
         router = Conductor.attachRouter(this, outlet, savedInstanceState)
         if (!router.hasRootController()) {
-            router.setRoot(RouterTransaction.with(HomeController()))
+            val homeController = HomeController()
+            router.setRoot(RouterTransaction.with(homeController))
+            currentController.onNext(homeController)
         }
-        if (titleSub == null) {
-            val current = router.backstack.last().controller()
-            if (current is BaseController) {
-                titleSub = subscribeToTitle(current)
-            }
-        }
+        //if (titleSub == null) {
+        //    val current = router.backstack.last().controller()
+        //    if (current is BaseController) {
+        //        titleSub = subscribeToTitle(current)
+        //    }
+        //}
 
         router.addChangeListener(this)
 
@@ -41,8 +49,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         toolbar.onBackPressed = ::onBackPressed
         toolbar.onTextChanged = ::onQueryTextChange
         toolbar.onSearchCancelled = this::onSearchCancelled
-
-        resetTitle()
     }
 
     private fun onSearchCancelled() {
@@ -51,17 +57,8 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         }
     }
 
-    private fun resetTitle() {
-        toolbar.title = getString(R.string.app_name)
-    }
-
     override fun onChangeStarted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
-        titleSub?.dispose()
-        if (to is BaseController) {
-            titleSub = subscribeToTitle(to)
-        } else {
-            resetTitle()
-        }
+        if (to is BaseController) currentController.onNext(to)
 
         if (to !is SearchController) {
             toolbar.searchEnabled = to is HomeController
@@ -73,11 +70,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
     override fun onChangeCompleted(to: Controller?, from: Controller?, isPush: Boolean, container: ViewGroup, handler: ControllerChangeHandler) {
     }
-
-    private fun subscribeToTitle(provider: BaseController) = provider.title.subscribe {
-        toolbar.title = it
-    }
-
 
     override fun onBackPressed() {
         if (!router.handleBack()) {
@@ -102,4 +94,23 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
     private fun currentController() = router.backstack.last().controller()
 
+    override fun onResume() {
+        super.onResume()
+
+        val titleSub = currentController
+                .switchMap { it.title }
+                .subscribe {
+                    toolbar.title = it
+                }
+
+        subscriptions = CompositeDisposable()
+        subscriptions.add(titleSub)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if (! subscriptions.isDisposed)
+            subscriptions.dispose()
+    }
 }

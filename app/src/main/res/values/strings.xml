@@ -25,4 +25,5 @@
     <string name="search_empty_query">Írjon be egy kifejezést a kereséshez</string>
     <string name="back">Vissza</string>
     <string name="clear">Törlés</string>
+    <string name="info">Részletek</string>
 </resources>

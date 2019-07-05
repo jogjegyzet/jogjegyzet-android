@@ -171,10 +171,19 @@ class TitleView @JvmOverloads constructor(
 
         menuItemViews.clear()
 
+        val tv = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, tv, true)
+        val borderless = tv.resourceId
+
         for (item in _menuItems) {
             val view = ImageButton(context)
 
             view.setImageResource(item.iconRes)
+            view.setBackgroundResource(borderless)
+            view.setColorFilter(0xFFFFFFFF.toInt())
+            val lp = LayoutParams(32.px, 32.px)
+            lp.setMargins(2.px, 12.px, 6.px, 0)
+            view.layoutParams = lp
 
             menuItemViews.add(view)
             addView(view)

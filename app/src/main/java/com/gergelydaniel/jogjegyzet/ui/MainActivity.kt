@@ -103,8 +103,15 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
                     toolbar.title = it
                 }
 
+        val iconSub = currentController
+                .switchMap { it.icons }
+                .subscribe {
+                    toolbar.menuItems = it
+                }
+
         subscriptions = CompositeDisposable()
         subscriptions.add(titleSub)
+        subscriptions.add(iconSub)
     }
 
     override fun onPause() {

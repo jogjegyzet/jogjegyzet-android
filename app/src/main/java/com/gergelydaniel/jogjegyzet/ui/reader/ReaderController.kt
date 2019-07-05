@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.BaseController
+import com.gergelydaniel.jogjegyzet.ui.appbar.MenuItem
 import com.github.barteksc.pdfviewer.PDFView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.view_title.view.*
 import java.net.URL
 
 
@@ -21,9 +24,8 @@ class ReaderController(private val url: String, private val docTitle: String) : 
 
     constructor(args: Bundle) : this(args.getString(KEY_URL), args.getString(KEY_TITLE))
 
-    override val title: Observable<String>
-        get() = Observable.just(docTitle)
-
+    override val title: Observable<String> = Observable.just(docTitle)
+    override val icons: Observable<List<MenuItem>> = Observable.just(listOf(MenuItem(R.drawable.ic_info, R.string.info)))
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         pdfView = PDFView(inflater.context, null)

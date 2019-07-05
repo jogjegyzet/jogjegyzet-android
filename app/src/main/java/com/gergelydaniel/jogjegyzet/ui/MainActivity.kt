@@ -2,16 +2,13 @@ package com.gergelydaniel.jogjegyzet.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.*
 import com.gergelydaniel.jogjegyzet.R
 import com.gergelydaniel.jogjegyzet.ui.home.HomeController
 import com.gergelydaniel.jogjegyzet.ui.search.SearchController
 import dagger.android.AndroidInjection
-import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,7 +31,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         if (!router.hasRootController()) {
             val homeController = HomeController()
             router.setRoot(RouterTransaction.with(homeController))
-            currentController.onNext(homeController)
         }
 
         router.addChangeListener(this)
@@ -112,6 +108,16 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         subscriptions = CompositeDisposable()
         subscriptions.add(titleSub)
         subscriptions.add(iconSub)
+
+        val current = currentController()
+        if (current is BaseController) {
+            currentController.onNext(current)
+        }
+        toolbar.searchEnabled = current is HomeController
+        toolbar.backVisible = current !is HomeController
+        if (current is SearchController) {
+            toolbar.setSearchState(current.query)
+        }
     }
 
     override fun onPause() {

@@ -56,6 +56,8 @@ class ReaderController(private val id: String) : BaseController() {
     override fun onAttach(view: View) {
         super.onAttach(view)
 
+        url = null
+
         presenter.getViewModel(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

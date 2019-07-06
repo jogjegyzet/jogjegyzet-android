@@ -1,6 +1,6 @@
 package com.danielgergely.jogjegyzet.ui.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,9 +70,9 @@ open class BrowserAdapter : RecyclerView.Adapter<ViewHolder>() {
         }
     }
 
-    override fun onViewRecycled(holder: ViewHolder?) {
+    override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
-        holder?.itemView?.setOnClickListener(null)
+        holder.itemView.setOnClickListener(null)
     }
 
     override fun getItemCount(): Int {

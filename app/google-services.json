@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "540201672091",
+    "firebase_url": "https://jogjegyzet-194422.firebaseio.com",
+    "project_id": "jogjegyzet-194422",
+    "storage_bucket": "jogjegyzet-194422.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540201672091:android:ec3d3d34d9c2d3d8",
+        "android_client_info": {
+          "package_name": "com.danielgergely.jogjegyzet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540201672091-p1auhms04m6uj29a4si1v1511t2ii55h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDl-QXTbYKmZbt0HuEs-d74d3EzfxEbqmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540201672091-p1auhms04m6uj29a4si1v1511t2ii55h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

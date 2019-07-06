@@ -1,6 +1,6 @@
 package com.danielgergely.jogjegyzet.persistence.favorite
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 @Dao
 abstract class FavouriteDAO {

@@ -163,3 +163,7 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/android,androidstudio
+
+# Secure files
+keystore.properties
+*.jks

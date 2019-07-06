@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gergelydaniel.jogjegyzet.ui.MainActivity">
+    tools:context="com.gergelydaniel.jogjegyzet.com.danielgergely.jogjegyzet.ui.MainActivity">
 
-    <com.gergelydaniel.jogjegyzet.ui.appbar.TitleView
+    <com.danielgergely.jogjegyzet.ui.appbar.TitleView
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"

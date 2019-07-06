@@ -10,7 +10,7 @@ kapt {
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.gergelydaniel.jogjegyzet"
+        applicationId "com.danielgergely.jogjegyzet"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1

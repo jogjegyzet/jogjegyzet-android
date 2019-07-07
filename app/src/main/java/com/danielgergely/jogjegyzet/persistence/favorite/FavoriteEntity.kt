@@ -7,8 +7,8 @@ import androidx.room.Index
 import org.threeten.bp.LocalDateTime
 
 @Entity(tableName = "favorite", indices = [Index(value = ["doc_id"], unique = true)])
-class FavoriteEntity(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "order") var order: Int = 0,
+data class FavoriteEntity(
+        @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "order") var order: Int = 0,
         @ColumnInfo(name = "doc_id") var docId: String,
         @ColumnInfo(name = "category") var categoryId: String?,
         @ColumnInfo(name = "url") var fileUrl: String,

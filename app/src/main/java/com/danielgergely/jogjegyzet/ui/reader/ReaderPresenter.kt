@@ -5,6 +5,7 @@ import com.danielgergely.jogjegyzet.service.DocumentRepository
 import com.danielgergely.jogjegyzet.service.FavoriteRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -16,6 +17,12 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
     private val docSubject: BehaviorSubject<DocumentData> = BehaviorSubject.create()
     private val refreshSubject = PublishSubject.create<Any>()
 
+    private fun getDocument(): Single<DocumentData> {
+        return docSubject
+                .filter { it != null }
+                .firstOrError()
+    }
+
     fun getViewModel(docId: String): Observable<DocumentData> {
         return documentRepository.getDocument(docId)
                 .subscribeOn(Schedulers.io())
@@ -24,27 +31,25 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun addToFavorites(): Completable {
-        return docSubject
-                .filter { it != null }
-                .take(1)
+    fun addToFavorites(): Single<Completable> {
+        return getDocument()
                 .flatMapCompletable { favoriteRepository.insert(it.document).subscribeOn(Schedulers.io()) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete { refreshSubject.onNext(Any()) }
+                .toSingle { removeFromFavorites().ignoreElement() }
     }
 
-    fun removeFromFavorites(): Completable {
-        return docSubject
-                .filter { it != null }
-                .take(1)
-                .flatMapCompletable { favoriteRepository.deleteById(it.document.id).subscribeOn(Schedulers.io()) }
+    fun removeFromFavorites(): Single<Completable> {
+        return getDocument()
+                .flatMap { favoriteRepository.deleteById(it.document.id).subscribeOn(Schedulers.io()) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete { refreshSubject.onNext(Any()) }
+                .doOnSuccess { refreshSubject.onNext(Any()) }
+                .map { index ->
+                    getDocument().flatMapCompletable { document -> favoriteRepository.insert(document.document, index) }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+
+                }
     }
 
-    fun undoAddToFavourites(): Completable = removeFromFavorites()
-
-    fun undoRemoveFromFavourites(): Completable {
-        return Completable.complete()
-    }
 }

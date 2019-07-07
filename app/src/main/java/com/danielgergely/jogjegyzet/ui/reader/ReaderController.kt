@@ -103,40 +103,33 @@ class ReaderController(private val id: String) : BaseController() {
     }
 
     override fun onMenuItemClick(index: Int) {
-        when(index) {
+        when (index) {
             0 -> {
                 val inFavs = isInFavourites
                 if (inFavs != null) {
-                    val undoAction: Completable
                     val actionText: Int
 
                     val obs = if (inFavs) {
                         actionText = R.string.removed_from_favs
-                        undoAction = presenter.undoRemoveFromFavourites()
                         presenter.removeFromFavorites()
                     } else {
                         actionText = R.string.added_to_favs
-                        undoAction = presenter.undoAddToFavourites()
                         presenter.addToFavorites()
                     }
 
-                    obs
-                            .toObservable<Any>()
-                            .compose(bindToLifecycle())
-                            .doOnComplete {
-                                Snackbar.make(view!!, actionText, 5000)
-                                        .setAction(R.string.undo) {
-                                            undoAction.subscribe()
-                                        }
-                                        .show()
-                            }
-                            .subscribe()
+                    obs.subscribe { undoAction ->
+                        Snackbar.make(view!!, actionText, 5000)
+                                .setAction(R.string.undo) {
+                                    undoAction.subscribe()
+                                }
+                                .show()
+                    }
                 }
             }
             1 -> router.pushController(
-                        RouterTransaction.with(DocumentController(id))
-                                .popChangeHandler(HorizontalChangeHandler())
-                                .pushChangeHandler(HorizontalChangeHandler()))
+                    RouterTransaction.with(DocumentController(id))
+                            .popChangeHandler(HorizontalChangeHandler())
+                            .pushChangeHandler(HorizontalChangeHandler()))
 
         }
     }

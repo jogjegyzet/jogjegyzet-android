@@ -27,13 +27,23 @@ class FavoriteRepository @Inject constructor(private val db: JogjegyzetDatabase)
     fun getById(id: String): Maybe<Document> =
             Maybe.fromCallable { db.favoriteDao().getById(id)?.let(::mapFromEntity) }
 
-    fun deleteById(id: String) = Completable.fromAction {
-        db.favoriteDao().deleteById(id)
-    }.doOnComplete { refreshSubject.onNext(PUBLISH_DATA) }
+    /**
+     * Deletes an entity, returns its old index
+     */
+    fun deleteById(id: String) = Single.fromCallable {
+        db.favoriteDao().deleteByIdReturnIndex(id)
+    }.doOnSuccess { refreshSubject.onNext(PUBLISH_DATA) }
 
     fun insert(document: Document): Completable =
             Completable.fromAction { db.favoriteDao().insert(document.let(::mapToEntity)) }
                     .doOnComplete { refreshSubject.onNext(PUBLISH_DATA) }
+
+    fun insert(document: Document, index: Int): Completable =
+            Completable.fromAction {
+                val entity = document.let(::mapToEntity)
+                entity.order = index
+                db.favoriteDao().insertWithIndex(entity)
+            }.doOnComplete { refreshSubject.onNext(PUBLISH_DATA) }
 
     fun updateIfExists(document: Document): Single<Boolean> =
             Single.fromCallable { db.favoriteDao().updateIfContains(document.let(::mapToEntity)) }

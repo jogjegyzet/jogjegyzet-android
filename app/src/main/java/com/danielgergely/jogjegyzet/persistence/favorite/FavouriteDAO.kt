@@ -16,11 +16,26 @@ abstract class FavouriteDAO {
     @Query("SELECT * FROM favorite WHERE doc_id = :id")
     abstract fun getById(id: String): FavoriteEntity?
 
-    @Query("UPDATE favorite SET `order` = `order` - 1 WHERE `order` >= :from")
-    protected abstract fun decreaseOrder(from: Int)
+    @Query("UPDATE favorite SET `order` = :to WHERE `order` = :from")
+    protected abstract fun changeOrder(from: Int, to: Int)
 
-    @Query("UPDATE favorite SET `order` = `order` + 1 WHERE `order` >= :from")
-    protected abstract fun increaseOrder(from: Int)
+    @Transaction
+    protected open fun decreaseOrderFrom(from: Int) {
+        getAll().filter { it.order >= from }
+                .sortedBy { it.order }
+                .forEach {
+            changeOrder(it.order, it.order - 1)
+        }
+    }
+
+    @Transaction
+    protected open fun increaseOrderFrom(from: Int) {
+        getAll().filter { it.order >= from }
+                .sortedByDescending { it.order }
+                .forEach {
+                    changeOrder(it.order, it.order + 1)
+                }
+    }
 
     @Query("SELECT MAX(`order`) FROM favorite")
     protected abstract fun getHighestIndex(): Int?
@@ -39,7 +54,7 @@ abstract class FavouriteDAO {
 
     @Transaction
     open fun insertWithIndex(entity: FavoriteEntity) {
-        increaseOrder(entity.order)
+        increaseOrderFrom(entity.order)
         insertInner(entity)
     }
 
@@ -49,7 +64,7 @@ abstract class FavouriteDAO {
         val index = entity.order
 
         deleteByIdInner(id)
-        decreaseOrder(index)
+        decreaseOrderFrom(index)
 
         return index
     }

@@ -2,7 +2,6 @@ package com.danielgergely.jogjegyzet.ui.reader
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,25 +9,22 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.danielgergely.jogjegyzet.R
-import com.danielgergely.jogjegyzet.service.DocumentData
 import com.danielgergely.jogjegyzet.ui.BaseController
 import com.danielgergely.jogjegyzet.ui.appbar.MenuItem
 import com.danielgergely.jogjegyzet.ui.document.DocumentController
-import com.github.barteksc.pdfviewer.PDFView
-import io.reactivex.Completable
-import io.reactivex.Observable
+import com.danielgergely.jogjegyzet.util.hide
+import com.danielgergely.jogjegyzet.util.show
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import java.net.URL
+import kotlinx.android.synthetic.main.controller_reader.view.*
 import javax.inject.Inject
 
 
 private const val KEY_ID = "id"
 
 class ReaderController(private val id: String) : BaseController() {
-    private lateinit var pdfView: PDFView
-
     @Inject
     internal lateinit var presenter: ReaderPresenter
 
@@ -41,10 +37,7 @@ class ReaderController(private val id: String) : BaseController() {
     override val icons: BehaviorSubject<List<MenuItem>> = BehaviorSubject.create()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
-        pdfView = PDFView(inflater.context, null)
-        pdfView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        pdfView.setBackgroundColor(0xFF666666.toInt())
-        return pdfView
+        return inflater.inflate(R.layout.controller_reader, container, false)
     }
 
     override fun onFirstAttach() {
@@ -65,36 +58,52 @@ class ReaderController(private val id: String) : BaseController() {
     }
 
     @SuppressLint("CheckResult")
-    private fun render(data: DocumentData) {
-        if (url != data.document.fileUrl) {
-            Observable.fromCallable { URL(data.document.fileUrl).openStream() }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .compose(bindToLifecycle())
-                    .subscribe {
-                        pdfView.fromStream(it)
-                                .spacing(8)
-                                .onPageError { i, t ->
-                                    t.printStackTrace()
-                                }
-                                .load()
-                    }
+    private fun render(vm: ViewModel) {
+        val view = view!!
+        when (vm) {
+            is ViewModel.Loading -> {
+                view.reader_error.hide()
+                view.pdf_view.hide()
+
+                view.reader_progress.show()
+            }
+            is ViewModel.Error -> {
+                view.reader_progress.hide()
+                view.pdf_view.hide()
+
+                view.reader_error.show()
+            }
+            is ViewModel.Data -> {
+                view.reader_progress.hide()
+                view.reader_error.hide()
+
+                view.pdf_view.show()
+
+                if (url != vm.document.document.fileUrl) {
+                    view.pdf_view.fromStream(vm.stream)
+                            .spacing(8)
+                            .onPageError { i, t ->
+                                t.printStackTrace()
+                            }
+                            .load()
+                }
+
+                title.onNext(vm.document.document.name)
+
+                isInFavourites = vm.document.isInFavorites
+                url = vm.document.document.fileUrl
+
+                val favoritesMenuItem = if (vm.document.isInFavorites) {
+                    MenuItem(R.drawable.ic_star_border, R.string.remove_from_favorites)
+                } else {
+                    MenuItem(R.drawable.ic_star, R.string.add_to_favorites)
+                }
+
+                val menuItems = listOf(favoritesMenuItem, MenuItem(R.drawable.ic_info, R.string.info))
+
+                icons.onNext(menuItems)
+            }
         }
-
-        title.onNext(data.document.name)
-
-        isInFavourites = data.isInFavorites
-        url = data.document.fileUrl
-
-        val favoritesMenuItem = if (data.isInFavorites) {
-            MenuItem(R.drawable.ic_star_border, R.string.remove_from_favorites)
-        } else {
-            MenuItem(R.drawable.ic_star, R.string.add_to_favorites)
-        }
-
-        val menuItems = listOf(favoritesMenuItem, MenuItem(R.drawable.ic_info, R.string.info))
-
-        icons.onNext(menuItems)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

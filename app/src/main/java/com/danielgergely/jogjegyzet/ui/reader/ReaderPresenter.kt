@@ -10,6 +10,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.io.InputStream
+import java.net.URL
 import javax.inject.Inject
 
 class ReaderPresenter @Inject constructor(private val documentRepository: DocumentRepository,
@@ -23,12 +25,18 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
                 .firstOrError()
     }
 
-    fun getViewModel(docId: String): Observable<DocumentData> {
+    fun getViewModel(docId: String): Observable<ViewModel> {
         return documentRepository.getDocument(docId)
                 .subscribeOn(Schedulers.io())
                 .repeatWhen { refreshSubject }
                 .doOnNext(docSubject::onNext)
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { docData ->
+                    Observable.fromCallable { URL(docData.document.fileUrl).openStream() }
+                            .subscribeOn(Schedulers.io())
+                            .map { stream -> ViewModel.Data(docData, stream) as ViewModel }
+                }.startWith(ViewModel.Loading)
+                .onErrorReturn { ViewModel.Error(it) }
     }
 
     fun addToFavorites(): Single<Completable> {
@@ -51,5 +59,12 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
 
                 }
     }
+
+}
+
+sealed class ViewModel {
+    object Loading : ViewModel()
+    class Error(val error: Throwable): ViewModel()
+    class Data(val document: DocumentData, val stream: InputStream) : ViewModel()
 
 }

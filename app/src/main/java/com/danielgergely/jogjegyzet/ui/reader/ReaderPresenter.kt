@@ -1,5 +1,6 @@
 package com.danielgergely.jogjegyzet.ui.reader
 
+import com.danielgergely.jogjegyzet.domain.NoInternetException
 import com.danielgergely.jogjegyzet.service.DocumentData
 import com.danielgergely.jogjegyzet.service.DocumentRepository
 import com.danielgergely.jogjegyzet.service.FavoriteRepository
@@ -12,6 +13,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.io.InputStream
 import java.net.URL
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class ReaderPresenter @Inject constructor(private val documentRepository: DocumentRepository,
@@ -25,6 +27,11 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
                 .firstOrError()
     }
 
+    private fun mapError(error: Throwable) = when(error) {
+        is UnknownHostException -> NoInternetException()
+        else -> error
+    }
+
     fun getViewModel(docId: String): Observable<ViewModel> {
         return documentRepository.getDocument(docId)
                 .subscribeOn(Schedulers.io())
@@ -36,7 +43,7 @@ class ReaderPresenter @Inject constructor(private val documentRepository: Docume
                             .subscribeOn(Schedulers.io())
                             .map { stream -> ViewModel.Data(docData, stream) as ViewModel }
                 }.startWith(ViewModel.Loading)
-                .onErrorReturn { ViewModel.Error(it) }
+                .onErrorReturn { ViewModel.Error(mapError(it)) }
     }
 
     fun addToFavorites(): Single<Completable> {

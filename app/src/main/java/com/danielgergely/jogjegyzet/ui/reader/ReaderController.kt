@@ -9,6 +9,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.christianbahl.conductor.ConductorInjection
 import com.danielgergely.jogjegyzet.R
+import com.danielgergely.jogjegyzet.domain.NoInternetException
 import com.danielgergely.jogjegyzet.ui.BaseController
 import com.danielgergely.jogjegyzet.ui.appbar.MenuItem
 import com.danielgergely.jogjegyzet.ui.document.DocumentController
@@ -72,6 +73,11 @@ class ReaderController(private val id: String) : BaseController() {
                 view.pdf_view.hide()
 
                 view.reader_error.show()
+
+                view.reader_error.setText(when(vm.error) {
+                    is NoInternetException -> R.string.nointernet
+                    else -> R.string.error
+                })
             }
             is ViewModel.Data -> {
                 view.reader_progress.hide()

@@ -21,6 +21,8 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.controller_reader.view.*
 import javax.inject.Inject
+import android.content.Intent
+import android.net.Uri
 
 
 private const val KEY_ID = "id"
@@ -105,7 +107,10 @@ class ReaderController(private val id: String) : BaseController() {
                     MenuItem(R.drawable.ic_star, R.string.add_to_favorites)
                 }
 
-                val menuItems = listOf(favoritesMenuItem, MenuItem(R.drawable.ic_info, R.string.info))
+                val detailsMenuItem = MenuItem(R.drawable.ic_info, R.string.open_in_browser)
+                val openInBrowserMenuItem = MenuItem(R.drawable.ic_open_in_browser, R.string.open_in_browser)
+
+                val menuItems = listOf(favoritesMenuItem, openInBrowserMenuItem, detailsMenuItem)
 
                 icons.onNext(menuItems)
             }
@@ -141,7 +146,14 @@ class ReaderController(private val id: String) : BaseController() {
                     }
                 }
             }
-            1 -> router.pushController(
+            1 -> {
+                val url = url
+                if (url != null) {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(browserIntent)
+                }
+            }
+            2 -> router.pushController(
                     RouterTransaction.with(DocumentController(id))
                             .popChangeHandler(HorizontalChangeHandler())
                             .pushChangeHandler(HorizontalChangeHandler()))

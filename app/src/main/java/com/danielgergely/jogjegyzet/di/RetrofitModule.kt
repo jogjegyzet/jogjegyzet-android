@@ -45,9 +45,9 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideUpdateRetrofitClient(gson: Gson): UpdateRetrofitClient {
+    fun provideUpdateRetrofitClient(@Named(CONFIG_APP_BASE_URL) baseUrl: String, gson: Gson): UpdateRetrofitClient {
         return Retrofit.Builder()
-                .baseUrl("http://demo3780893.mockable.io/v0/")
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()

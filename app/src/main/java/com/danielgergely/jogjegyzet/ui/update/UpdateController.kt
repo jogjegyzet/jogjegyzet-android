@@ -1,6 +1,8 @@
 package com.danielgergely.jogjegyzet.ui.update
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +45,13 @@ class UpdateController : BaseController() {
         RxView.clicks(view.button_update)
                 .compose(bindToLifecycle())
                 .subscribe {
-                    presenter.update()
+                    val appPackageName = this.view!!.context.packageName
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+                    } catch (anfe: android.content.ActivityNotFoundException) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+                    }
+
                 }
 
         RxView.clicks(view.button_later)

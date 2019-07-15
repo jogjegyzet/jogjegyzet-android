@@ -16,10 +16,6 @@ class UpdatePresenter @Inject constructor(private val service: UpdateMessageServ
                     }
                 }
     }
-
-    fun update() {
-
-    }
 }
 
 sealed class ViewModel {

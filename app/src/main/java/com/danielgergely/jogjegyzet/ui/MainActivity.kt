@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         router = Conductor.attachRouter(this, outlet, savedInstanceState)
 
         updateSub = updateService.getUpdateMessageStatus()
-                .take(1)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (!router.hasRootController()) {
@@ -65,8 +64,8 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
                                 )
                             }
                         }
+                        setToolbar()
                     }
-                    setToolbar()
                 }
 
 

@@ -1,6 +1,6 @@
 package com.danielgergely.jogjegyzet.service
 
-import com.danielgergely.jogjegyzet.api.ApiClient
+import com.danielgergely.jogjegyzet.api.jogjegyzet.ApiClient
 import com.danielgergely.jogjegyzet.domain.Category
 import com.danielgergely.jogjegyzet.domain.NoInternetException
 import com.danielgergely.jogjegyzet.util.maybeFromNullable

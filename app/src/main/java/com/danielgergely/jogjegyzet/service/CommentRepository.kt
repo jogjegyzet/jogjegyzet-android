@@ -1,6 +1,6 @@
 package com.danielgergely.jogjegyzet.service
 
-import com.danielgergely.jogjegyzet.api.ApiClient
+import com.danielgergely.jogjegyzet.api.jogjegyzet.ApiClient
 import com.danielgergely.jogjegyzet.domain.Comment
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit

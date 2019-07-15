@@ -1,7 +1,7 @@
 package com.danielgergely.jogjegyzet.service
 
 import android.util.LruCache
-import com.danielgergely.jogjegyzet.api.ApiClient
+import com.danielgergely.jogjegyzet.api.jogjegyzet.ApiClient
 import com.danielgergely.jogjegyzet.domain.Document
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers

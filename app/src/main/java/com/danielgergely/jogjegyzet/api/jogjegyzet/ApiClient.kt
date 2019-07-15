@@ -1,4 +1,4 @@
-package com.danielgergely.jogjegyzet.api
+package com.danielgergely.jogjegyzet.api.jogjegyzet
 
 import com.danielgergely.jogjegyzet.domain.*
 import io.reactivex.Maybe

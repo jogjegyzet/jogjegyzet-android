@@ -1,6 +1,6 @@
 package com.danielgergely.jogjegyzet.ui.search
 
-import com.danielgergely.jogjegyzet.api.ApiClient
+import com.danielgergely.jogjegyzet.api.jogjegyzet.ApiClient
 import com.danielgergely.jogjegyzet.domain.Category
 import com.danielgergely.jogjegyzet.domain.SearchResult
 import com.danielgergely.jogjegyzet.service.DocumentData

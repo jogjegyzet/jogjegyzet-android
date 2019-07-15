@@ -14,17 +14,14 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_444d65c60933_key -iv $encrypted_444d65c60933_iv -in signing.tar.enc -out signing.tar -d
   - tar xvf signing.tar
 script:
-  - "./gradlew clean build"
+  - "./gradlew clean bundle"
 deploy:
     provider: releases
     on:
       branch: master
     api_key: $github_deploy_token
     file:
-      - app/build/outputs/apk/release/app-arm64-v8a-release.apk
-      - app/build/outputs/apk/release/app-armeabi-v7a-release.apk
-      - app/build/outputs/apk/release/app-x86_64-release.apk
-      - app/build/outputs/apk/release/app-x86-release.apk
+      - app/build/outputs/bundle/release/app.aab
       - app/build/outputs/mapping/release/mapping.txt
     skip_cleanup: true
     draft: true

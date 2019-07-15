@@ -15,3 +15,17 @@ before_install:
   - tar xvf signing.tar
 script:
   - "./gradlew clean build"
+deploy:
+    provider: releases
+    on:
+      branch: master
+    api_key: $github_deploy_token
+    file:
+      - app/build/outputs/apk/release/app-arm64-v8a-release.apk
+      - app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+      - app/build/outputs/apk/release/app-x86_64-release.apk
+      - app/build/outputs/apk/release/app-x86-release.apk
+      - app/build/outputs/mapping/release/mapping.txt
+    skip_cleanup: true
+    draft: true
+    overwrite: true

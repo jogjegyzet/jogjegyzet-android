@@ -1,12 +1,10 @@
 <resources>
     <string name="app_name">Jogjegyzet</string>
-    <string name="search">Keresés</string>
     <string name="category">Kategória</string>
     <string name="name">Név</string>
     <string name="description">Leírás</string>
     <string name="num_downloads">Letöltések száma</string>
     <string name="error">Hiba!</string>
-    <string name="open">Megnyitás</string>
     <string name="noresult">Nincs találat a \"%s\" kifejezésre</string>
     <string name="thumpsup">thumpsup</string>
     <string name="thumpsdown">thumpsdown</string>
@@ -26,7 +24,6 @@
     <string name="search_empty_query">Írjon be egy kifejezést a kereséshez</string>
     <string name="back">Vissza</string>
     <string name="clear">Törlés</string>
-    <string name="info">Részletek</string>
     <string name="open_in_browser">Megnyitás böngészőben</string>
     <string name="undo">Visszavonás</string>
     <string name="added_to_favs">Hozzáadva a kedvencekhez</string>

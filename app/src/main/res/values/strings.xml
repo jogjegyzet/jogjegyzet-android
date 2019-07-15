@@ -31,4 +31,6 @@
     <string name="undo">Visszavonás</string>
     <string name="added_to_favs">Hozzáadva a kedvencekhez</string>
     <string name="removed_from_favs">Eltávolítva a kedvencek közül</string>
+    <string name="update">Frissítés</string>
+    <string name="later">Később</string>
 </resources>

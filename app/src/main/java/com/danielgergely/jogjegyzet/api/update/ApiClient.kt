@@ -13,6 +13,6 @@ class UpdateApiClient @Inject constructor(private val client: UpdateRetrofitClie
 }
 
 private fun mapEntity(entity: UpdateMessageEntity) = when (entity.type) {
-    MessageType.OPTIONAL -> UpdateMessage.OptionalUpdate(entity.message)
-    MessageType.MUST -> UpdateMessage.MustUpdate(entity.message)
+    MessageType.OPTIONAL -> UpdateMessage.OptionalUpdate(entity.message, entity.maxVersion)
+    MessageType.MUST -> UpdateMessage.MustUpdate(entity.message, entity.maxVersion)
 }

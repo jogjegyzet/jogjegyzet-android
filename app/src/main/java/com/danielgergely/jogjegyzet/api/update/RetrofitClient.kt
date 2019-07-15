@@ -15,4 +15,5 @@ enum class MessageType {
 }
 
 class UpdateMessageEntity(val type: MessageType,
-                          val message: String)
+                          val message: String,
+                          val maxVersion: Int)

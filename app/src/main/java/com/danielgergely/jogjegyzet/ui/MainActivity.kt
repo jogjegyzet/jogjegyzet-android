@@ -1,25 +1,36 @@
 package com.danielgergely.jogjegyzet.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.bluelinelabs.conductor.*
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.danielgergely.jogjegyzet.R
+import com.danielgergely.jogjegyzet.domain.UpdateMessage
+import com.danielgergely.jogjegyzet.service.UpdateMessageService
 import com.danielgergely.jogjegyzet.ui.home.HomeController
 import com.danielgergely.jogjegyzet.ui.search.SearchController
+import com.danielgergely.jogjegyzet.ui.update.UpdateController
 import dagger.android.AndroidInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChangeListener {
     private lateinit var router: Router
 
     private lateinit var subscriptions: CompositeDisposable
+    private lateinit var updateSub: Disposable
 
     private val currentController: Subject<BaseController> = BehaviorSubject.create()
+
+    @Inject
+    lateinit var updateService: UpdateMessageService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +39,36 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         AndroidInjection.inject(this)
 
         router = Conductor.attachRouter(this, outlet, savedInstanceState)
-        if (!router.hasRootController()) {
-            val homeController = HomeController()
-            router.setRoot(RouterTransaction.with(homeController))
-        }
+
+        updateSub = updateService.getUpdateMessageStatus()
+                .take(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (!router.hasRootController()) {
+                        when (it) {
+                            is UpdateMessage.None -> {
+                                val homeController = HomeController()
+                                router.setRoot(RouterTransaction.with(homeController))
+                            }
+                            is UpdateMessage.MustUpdate -> {
+                                val updateController = UpdateController()
+                                router.setRoot(RouterTransaction.with(updateController))
+                            }
+                            is UpdateMessage.OptionalUpdate -> {
+                                val homeController = HomeController()
+                                val updateController = UpdateController()
+
+                                router.setRoot(RouterTransaction.with(homeController))
+                                router.pushController(
+                                        RouterTransaction.with(updateController)
+                                                .popChangeHandler(HorizontalChangeHandler())
+                                )
+                            }
+                        }
+                    }
+                    setToolbar()
+                }
+
 
         router.addChangeListener(this)
 
@@ -58,7 +95,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
         if (to !is SearchController) {
             toolbar.searchEnabled = to is HomeController
-            toolbar.backVisible = to !is HomeController
+            toolbar.backVisible = to != null && to !is HomeController
         } else if (from !is HomeController) {
             toolbar.setSearchState(to.query)
         }
@@ -88,7 +125,7 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
 
     }
 
-    private fun currentController() = router.backstack.last().controller()
+    private fun currentController() = router.backstack.lastOrNull()?.controller()
 
     override fun onResume() {
         super.onResume()
@@ -109,12 +146,16 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
         subscriptions.add(titleSub)
         subscriptions.add(iconSub)
 
+        setToolbar()
+    }
+
+    private fun setToolbar() {
         val current = currentController()
         if (current is BaseController) {
             currentController.onNext(current)
         }
         toolbar.searchEnabled = current is HomeController
-        toolbar.backVisible = current !is HomeController
+        toolbar.backVisible = router.backstackSize > 1
         if (current is SearchController) {
             toolbar.setSearchState(current.query)
         }
@@ -123,7 +164,13 @@ class MainActivity : AppCompatActivity(), ControllerChangeHandler.ControllerChan
     override fun onPause() {
         super.onPause()
 
-        if (! subscriptions.isDisposed)
+        if (!subscriptions.isDisposed)
             subscriptions.dispose()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        updateSub.dispose()
     }
 }

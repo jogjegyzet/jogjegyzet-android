@@ -8,6 +8,7 @@ import com.danielgergely.jogjegyzet.di.homecontroller.HomeControllerModule
 import com.danielgergely.jogjegyzet.di.mainactivity.MainActivityModule
 import com.danielgergely.jogjegyzet.di.readercontroller.ReaderControllerModule
 import com.danielgergely.jogjegyzet.di.searchcontroller.SearchControllerModule
+import com.danielgergely.jogjegyzet.di.updatecontroller.UpdateControllerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -25,6 +26,7 @@ import javax.inject.Singleton
     DocumentControllerModule::class,
     ReaderControllerModule::class,
     SearchControllerModule::class,
+    UpdateControllerModule::class,
     HomeControllerModule::class,
     ConfigModule::class,
     RetrofitModule::class,
